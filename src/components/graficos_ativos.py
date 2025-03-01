@@ -15,9 +15,9 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import sys
 sys.path.append(funcao_dd)
-from funcoes_dd import criando_grafico_acao
+from src.dash_py_mercado_financeiro.funcoes_dd import criando_grafico_acao
 sys.path.append(app)
-from app import *
+from src.dash_py_mercado_financeiro.app import *
 
 
 

@@ -11,9 +11,9 @@ import dash_bootstrap_components as dbc
 from dash import Dash, html, dcc, dash_table, callback
 import sys
 sys.path.append(mt5)
-from dados_mt5_cotacoes import puxando_cotacoes, maiores_altas, maiores_baixas, gerar_lista_principais
+from src.dash_py_mercado_financeiro.dados_mt5_cotacoes import puxando_cotacoes, maiores_altas, maiores_baixas, gerar_lista_principais
 import pandas as pd
-from app import *
+from src.dash_py_mercado_financeiro.app import *
 from dash.dependencies import Input, Output
 
 

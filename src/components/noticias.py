@@ -9,7 +9,7 @@ app = os.getenv('diretorio_scripts')
 
 import sys
 sys.path.append(app)
-from app import *
+from src.dash_py_mercado_financeiro.app import *
 import dash_bootstrap_components as dbc
 from dash import Dash, html, dcc, dash_table, callback
 import pandas as pd
@@ -106,6 +106,8 @@ def gerar_tabela_noticias(noticias, jornal, tema):
     noticias['manchete'] = noticias['manchete'].fillna("").str.strip()
     noticias['topico'] = noticias['topico'].fillna("").str.strip()
 
+    noticias_filtradas = pd.DataFrame()
+
 
     if jornal == 'G1':
 
@@ -113,6 +115,7 @@ def gerar_tabela_noticias(noticias, jornal, tema):
         
     elif jornal == 'Brazil Journal':
 
+    
         noticias_filtradas = noticias[(noticias['jornal'] == 'brazil_journal') & (noticias['topico'] == tema)]
 
     elif jornal == 'Valor Econômico':
@@ -240,15 +243,15 @@ def update_options(jornal):
 
     if jornal == 'G1':
 
-        src = 'assets/g1.png'
+        src = './assets/g1.png'
 
     elif jornal == 'Brazil Journal':
 
-        src = 'assets/bj.png'
+        src = './assets/bj.png'
 
     elif jornal == 'Valor Econômico':
 
-        src = 'assets/valor.png'
+        src = './assets/valor.png'
 
     return src
 
@@ -260,15 +263,15 @@ def update_options(jornal):
 
     if jornal == 'WSJ':
 
-        src = 'assets/wsj.png'
+        src = './assets/wsj.png'
 
     elif jornal == 'Financial Times':
 
-        src = 'assets/ft.png'
+        src = './assets/ft.png'
 
     elif jornal == 'Fortune 500':
 
-        src = 'assets/fortune.png'
+        src = './assets/fortune.png'
 
     return src
 

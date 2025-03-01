@@ -9,8 +9,8 @@ from dash import Dash, html, dcc, dash_table, callback
 from dash.dependencies import Input, Output
 import sys
 sys.path.append(funcao_dd)
-from funcoes_dd import fazer_grafico_di, fazer_tabela_di, grafico_divida_pib, grafico_dolar, grafico_inflacao, info_divida_pib, info_dolar, info_inflacao
-from app import *
+from src.dash_py_mercado_financeiro.funcoes_dd import fazer_grafico_di, fazer_tabela_di, grafico_divida_pib, grafico_dolar, grafico_inflacao, info_divida_pib, info_dolar, info_inflacao
+from src.dash_py_mercado_financeiro.app import *
 lista_indicadores = ['DI', 'INFLAÇÃO', 'DÓLAR', 'DÍVIDA/PIB']
 lista_periodos = ['1 ano', '3 anos', '5 anos', '10 anos']
 

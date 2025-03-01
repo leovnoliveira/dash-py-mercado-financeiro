@@ -10,7 +10,7 @@ import datetime
 
 #erro = 'NoSuchElementException'
 
-def webscrapping_di():
+def webscrapping_di() -> pd.DataFrame:
 
     hoje = datetime.datetime.now()
     um_ano_atras = hoje - datetime.timedelta(days = 365)
@@ -112,7 +112,7 @@ def pegando_dados_di(url, driver):
     return tabela, indice
 
 
-def tratando_dados_di(df_dados, indice, legenda):
+def tratando_dados_di(df_dados: pd.DataFrame, indice, legenda: str):
 
     df_dados.columns = df_dados.loc[0]
     df_dados = df_dados['ÚLT. PREÇO']

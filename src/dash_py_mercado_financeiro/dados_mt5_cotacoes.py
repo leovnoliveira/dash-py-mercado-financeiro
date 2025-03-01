@@ -104,7 +104,7 @@ def selecionando_tickers():
 
 
 
-def puxando_cotacoes(tickers_escolhidos, principal = False):
+def puxando_cotacoes(tickers_escolhidos: list, principal = False):
 
     df_cotacoes = pd.DataFrame(columns=['Ticker', 'Preço', 'Retorno'], index=list(range(0, len(tickers_escolhidos))))
 
@@ -130,7 +130,7 @@ def puxando_cotacoes(tickers_escolhidos, principal = False):
     return df_cotacoes
 
 
-def maiores_altas(tickers_ibov):
+def maiores_altas(tickers_ibov: list):
         
         acoes = pegando_todos_os_tickers()
 
@@ -144,7 +144,7 @@ def maiores_altas(tickers_ibov):
 
         return df
 
-def maiores_baixas(tickers_ibov):
+def maiores_baixas(tickers_ibov: list):
 
         acoes = pegando_todos_os_tickers()
 
