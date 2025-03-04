@@ -1,36 +1,22 @@
-# Vars de ambiente
 import os
-from dotenv import load_dotenv
-load_dotenv()
-dir = os.getenv('diretorio')
-diretorio = os.path.join(dir, 'setores.csv')
-funcao_dd = os.getenv('diretorio_scripts')
-
-
-
 import pandas as pd
 from dash import Dash, html, dcc, dash_table, callback
 from dash.dependencies import Input, Output
-import sys
-sys.path.append(funcao_dd)
-from app import *
-from funcoes_dd import tabela_cotacao_setor_bolsa
+from src.dash_py_mercado_financeiro.app import *
+from src.dash_py_mercado_financeiro.funcoes_dd import tabela_cotacao_setor_bolsa
 
+# Carregar diretório na raiz do projeto
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")) # ../../ p/ voltar duas pastas
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
-
-
-
-
-
+# Carregar dados
+path_csv_setores = os.path.join(DATA_DIR, "setores.csv")
+df_setores = pd.read_csv(path_csv_setores)
+lista_setores = df_setores['SETOR'].unique()
 
 colunas_padrao = [{'name': 'Ticker', 'id': 'Ticker'},
                     {'name': 'Preço', 'id': 'Preço', 'type': 'numeric'},
                     {'name': 'Retorno', 'id': 'Retorno', 'type': 'numeric'}]
-
-df_setores = pd.read_csv(diretorio)
-
-lista_setores = df_setores['SETOR'].unique()
-
 
 layout = dbc.Row(
 

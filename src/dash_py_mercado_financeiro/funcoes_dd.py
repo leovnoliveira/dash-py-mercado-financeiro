@@ -1,22 +1,23 @@
 import pandas as pd
+import numpy as np
 import os
 import datetime
 import plotly.graph_objects as go
 import plotly.io as pio
-from dotenv import load_dotenv
-from dados_mt5_cotacoes import pegando_todos_os_tickers, puxando_cotacoes
+from src.dash_py_mercado_financeiro.dados_mt5_cotacoes import pegando_todos_os_tickers, puxando_cotacoes
 
-# Carregando dados
 
-load_dotenv()
+# Carregar diretório na raiz do projeto
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")) # ../../ p/ voltar duas pastas
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
-diretorio_dados = os.getenv('diretorio')
-cotacoes = os.path.join(diretorio_dados, 'cotacoes.parquet')
-setores = os.path.join(diretorio_dados, 'setores.csv')
-di = os.path.join(diretorio_dados, 'dados_di.csv')
-dados_inflacao = os.path.join(diretorio_dados, 'inflacao.csv')
-dados_dolar = os.path.join(diretorio_dados, 'dolar.csv')
-dados_divida_pib = os.path.join(diretorio_dados, 'divida_pib.csv')
+# Carregar dados
+cotacoes = os.path.join(DATA_DIR, 'cotacoes.parquet')
+setores = os.path.join(DATA_DIR, 'setores.csv')
+di = os.path.join(DATA_DIR, 'dados_di.csv')
+dados_inflacao = os.path.join(DATA_DIR, 'inflacao.csv')
+dados_dolar = os.path.join(DATA_DIR, 'dolar.csv')
+dados_divida_pib = os.path.join(DATA_DIR, 'divida_pib.csv')
 
 def criando_grafico_acao(acao):
         
@@ -164,18 +165,29 @@ def fazer_tabela_di():
 def info_inflacao():
     
     inflacao = pd.read_csv(dados_inflacao)
-    hoje = datetime.datetime.now()
-    ano_atual = hoje.year
     inflacao['Date'] =  pd.to_datetime(inflacao['Date'], errors= 'coerce')
     inflacao = inflacao.set_index('Date')
-    
-   
+    hoje = datetime.datetime.now()
+    ano_atual = hoje.year
 
+ 
     inflacao = inflacao.iloc[-12:, :]
-    inflacao_ano = inflacao.loc[f'{ano_atual}']
+    inflacao_ano = inflacao.loc[str(ano_atual)].to_frame() # Evita conversão para escalar
+    
+    # Verificar se o valor para a última linha do IPCA é NaN
+    if pd.isna(inflacao.iloc[-1, 0]):
+        inflacao_ano = inflacao.iloc[-1, 0] = inflacao.iloc[-2, 0]
 
+    if pd.isna(inflacao.iloc[-1, 0]):
+        inflacao_12m = inflacao.iloc[-1, 0] = inflacao.iloc[-2,0]
+
+
+
+    # Calcular os inflacões acumuladas, desconsiderando o NaN
     inflacao_12m = (1 + inflacao).cumprod() - 1
-    inflacao_ano = (1 + inflacao).cumprod() - 1
+    inflacao_ano = (1 + inflacao_ano).cumprod() - 1
+
+    
 
     IPCA_12M = str(round((inflacao_12m.iloc[-1, 0] * 100), 2)) + "%"
     IGPM_12M = str(round((inflacao_12m.iloc[-1, 1] * 100), 2)) + "%"
@@ -309,14 +321,21 @@ def grafico_divida_pib(anos):
 def info_dolar():
 
     dados = pd.read_csv(dados_dolar)
-    hoje = datetime.datetime.now()
-    ano_passado = hoje.year - 1
     dados = dados.set_index('Date')
     dados.index = pd.to_datetime(dados.index)
+    hoje = datetime.datetime.now()
+    um_ano_atras = datetime.datetime.now() - datetime.timedelta(days = 365)
+    # Encontrar a data mais próxima no dataset
+    data_mais_proxima = dados.index.asof(um_ano_atras) 
+    ano_passado = hoje.year - 1
+
+    print(f"A data mais próxima de {um_ano_atras} no inflaca.csv é {data_mais_proxima}")
+    print(f"O dolar em {data_mais_proxima} foi de {dados.loc[data_mais_proxima].iloc[0]}")
+    
 
     VALOR_ATUAL = "R$" + str(round((dados.iloc[-1, 0]), 2))
-    VAR_12M = str(round(((dados.iloc[-1, 0]/dados.iloc[1, 0]) - 1), 2)) + "%" 
-    VAR_ANO = str(round(((dados.iloc[-1, 0] / dados.loc[f'{ano_passado}'].iloc[-1, 0]) - 1), 2)) + "%"  
+    VAR_12M = str(round((((dados.iloc[-1, 0] - dados.loc[data_mais_proxima].iloc[0])/dados.loc[data_mais_proxima].iloc[0]) * 100), 2)) + "%" 
+    VAR_ANO = str(round((((dados.iloc[-1, 0] - dados.loc[f'{ano_passado}'].iloc[-1, 0]) / dados.loc[f'{ano_passado}'].iloc[-1, 0]) * 100), 2)) + "%"  
     VOL = str(round(((dados.pct_change().std().iloc[0] * 15.87) * 100), 2)) + "%"  
 
     df = pd.DataFrame({"ignore_1": ['VALOR ATUAL', 'Δ 12M', 'Δ ANO', 'VOL'], 'ignore_2': [VALOR_ATUAL, VAR_12M, VAR_ANO, VOL]})

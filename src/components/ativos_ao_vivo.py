@@ -1,25 +1,18 @@
-# Vars de ambiente
 import os
-from dotenv import load_dotenv
-load_dotenv()
-dir = os.getenv('diretorio')
-diretorio = os.path.join(dir, 'comp_ibov.csv')
-mt5 = os.getenv('diretorio_scripts')
-
-
 import dash_bootstrap_components as dbc
 from dash import Dash, html, dcc, dash_table, callback
-import sys
-sys.path.append(mt5)
 from src.dash_py_mercado_financeiro.dados_mt5_cotacoes import puxando_cotacoes, maiores_altas, maiores_baixas, gerar_lista_principais
 import pandas as pd
 from src.dash_py_mercado_financeiro.app import *
 from dash.dependencies import Input, Output
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
+path_ibov_csv = os.path.join(DATA_DIR, 'comp_ibov.csv')
 
 
-
-comp_ibov = pd.read_csv(diretorio)
+comp_ibov = pd.read_csv(path_ibov_csv)
 tickers_ibov = comp_ibov['codigos']
 
 colunas_padrao = [{'name': 'Ticker', 'id': 'Ticker'},

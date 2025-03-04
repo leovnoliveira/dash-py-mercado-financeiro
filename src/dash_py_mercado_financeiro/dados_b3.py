@@ -1,5 +1,6 @@
 import pandas as pd
 from selenium import webdriver
+from dotenv import load_dotenv
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
@@ -113,7 +114,9 @@ def composicao_ibov(caminho_downloads):
 
 if __name__ == "__main__":
 
-    caminho_downloads = r'C:\Users\Leonardo\Downloads'
+    load_dotenv()
+
+    caminho_downloads = os.getenv("caminho_downloads")
 
     composicao_ibov(caminho_downloads)
     setores_bolsa(caminho_downloads)

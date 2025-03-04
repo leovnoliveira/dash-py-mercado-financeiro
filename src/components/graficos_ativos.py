@@ -1,29 +1,17 @@
-# Vars de ambiente
 import os
-from dotenv import load_dotenv
-load_dotenv()
-dir = os.getenv('diretorio')
-diretorio = os.path.join(dir, 'tickers.csv')
-print(f"O diretorio onde está o arquivo tickers é: {diretorio}")
-funcao_dd = os.getenv('diretorio_scripts')
-app = os.getenv('diretorio_scripts')
-
-
 import pandas as pd
 from dash import Dash, html, dcc, dash_table, callback
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-import sys
-sys.path.append(funcao_dd)
 from src.dash_py_mercado_financeiro.funcoes_dd import criando_grafico_acao
-sys.path.append(app)
 from src.dash_py_mercado_financeiro.app import *
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
+path_ticker_csv = os.path.join(DATA_DIR, 'tickers.csv')
 
-
-
-lista_empresas = pd.read_csv(diretorio)['tickers'].to_list()
+lista_empresas = pd.read_csv(path_ticker_csv)['tickers'].to_list()
 
 layout = html.Div([dcc.Dropdown(lista_empresas, value = 'PETR4', id = 'escolher-grafico-aovivo',
                                 className = 'dcc-padrao',

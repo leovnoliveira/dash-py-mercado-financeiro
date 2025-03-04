@@ -3,6 +3,11 @@ import MetaTrader5 as mt5
 import pandas as pd
 import datetime
 import pytz
+import os
+
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
 
 def pegando_todos_os_tickers():
@@ -191,8 +196,8 @@ def construcao_historica_cotacoes():
 
     df_empresas = pd.DataFrame({'tickers': empresas})
 
-    df_empresas.to_csv('tickers.csv', index = False)
-    cotacoes_finais.to_parquet("cotacoes.parquet", index = False) 
+    df_empresas.to_csv(os.path.join(DATA_DIR, 'tickers.csv'), index = False)
+    cotacoes_finais.to_parquet(os.path.join(DATA_DIR, "cotacoes.parquet"), index = False) 
 
 
 

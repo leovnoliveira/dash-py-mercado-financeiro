@@ -1,4 +1,5 @@
 import os
+import time
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -7,10 +8,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
 
-load_dotenv()
-
-diretorio_dados = os.getenv('diretorio')
-os.chdir(diretorio_dados)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
 
 def g1_tech():
@@ -132,6 +131,8 @@ def brazil_journal(tema):
 
     driver.get(url)
 
+    time.sleep(3)
+
     todas_noticias = driver.find_element('xpath', '/html')
 
     html_not = todas_noticias.get_attribute('outerHTML')
@@ -234,6 +235,8 @@ def fortune(tema):
 
     driver.get(url)
 
+    time.sleep(3)
+
     todas_noticias = driver.find_element("xpath", '/html') 
 
     html_not = todas_noticias.get_attribute('outerHTML')
@@ -302,6 +305,8 @@ def wsj(tema):
 
     driver.get(url)
 
+    time.sleep(5)
+
     todas_noticias = driver.find_element("xpath", '/html') 
 
     html_not = todas_noticias.get_attribute('outerHTML')
@@ -317,10 +322,31 @@ def wsj(tema):
         df_noticias = pd.DataFrame(columns=['manchete', 'subtopico', 'link', 'topico', 'jornal'], index=[0, 1, 2, 3, 4, 5])
 
         for i, noticia in enumerate(caixas_destaque):
-
             subtopico = '-'
-            manchete = noticia.find('h3', class_ = 'css-fsvegl').a.span.p.text
-            link = noticia.find('h3', class_ = 'css-fsvegl').a['href']
+            # Tenta encontrar a tag <h3> com a classe esperada
+            h3_tag = noticia.find('h3', class_='css-fsvegl')
+            if h3_tag:
+                a_tag = h3_tag.find('a')
+            else:
+                a_tag = None
+
+            if a_tag:
+                span_tag = a_tag.find('span')
+            else:
+                span_tag = None
+
+            if span_tag:
+                # Tenta encontrar um <p> dentro de <span>; se não houver, usa o próprio texto de <span>
+                p_tag = span_tag.find('p')
+                if p_tag:
+                    manchete = p_tag.text.strip()
+                else:
+                    manchete = span_tag.text.strip()
+            else:
+                manchete = "Sem manchete"
+
+            # Para o link, tenta acessar o href do a_tag
+            link = a_tag['href'] if a_tag and a_tag.has_attr('href') else "Não encontrado"
 
             df_noticias.loc[i, 'subtopico'] = subtopico
             df_noticias.loc[i, 'manchete'] = manchete
@@ -328,9 +354,10 @@ def wsj(tema):
             df_noticias.loc[i, 'topico'] = tema
             df_noticias.loc[i, 'jornal'] = 'wsj'
 
-            if i == 5:
+            if i == (len(caixas_destaque) - 1) or i == 5:
 
                 break
+
 
         return df_noticias
 
@@ -341,10 +368,31 @@ def wsj(tema):
         caixas_destaque = soup.find_all("div", class_ = 'css-1yp7ne6') 
 
         for i, noticia in enumerate(caixas_destaque):
-
             subtopico = '-'
-            manchete = noticia.find('h3', class_ = 'css-fsvegl').a.span.p.text
-            link = noticia.find('h3', class_ = 'css-fsvegl').a['href']
+            # Tenta encontrar a tag <h3> com a classe esperada
+            h3_tag = noticia.find('h3', class_='css-fsvegl')
+            if h3_tag:
+                a_tag = h3_tag.find('a')
+            else:
+                a_tag = None
+
+            if a_tag:
+                span_tag = a_tag.find('span')
+            else:
+                span_tag = None
+
+            if span_tag:
+                # Tenta encontrar um <p> dentro de <span>; se não houver, usa o próprio texto de <span>
+                p_tag = span_tag.find('p')
+                if p_tag:
+                    manchete = p_tag.text.strip()
+                else:
+                    manchete = span_tag.text.strip()
+            else:
+                manchete = "Sem manchete"
+
+            # Para o link, tenta acessar o href do a_tag
+            link = a_tag['href'] if a_tag and a_tag.has_attr('href') else "Não encontrado"
 
             df_noticias.loc[i, 'subtopico'] = subtopico
             df_noticias.loc[i, 'manchete'] = manchete
@@ -353,28 +401,6 @@ def wsj(tema):
             df_noticias.loc[i, 'jornal'] = 'wsj'
 
             if i == (len(caixas_destaque) - 1) or i == 5:
-                
-                i = i + 1
-                break
-
-        caixas_destaque = soup.find_all("div", class_ = 'css-18y1fei') 
-
-        for _, noticia in enumerate(caixas_destaque):
-
-            subtopico = '-'
-            manchete = noticia.find('h3', class_ = 'css-fsvegl').a.span.p.text
-            link = noticia.find('h3', class_ = 'css-fsvegl').a['href']
-
-            df_noticias.loc[i, 'subtopico'] = subtopico
-            df_noticias.loc[i, 'manchete'] = manchete
-            df_noticias.loc[i, 'link'] = link
-            df_noticias.loc[i, 'topico'] = tema
-            df_noticias.loc[i, 'jornal'] = 'wsj'
-
-            i = i + 1
-
-            if i == 6:
-
                 break
 
         return df_noticias
@@ -386,10 +412,31 @@ def wsj(tema):
         df_noticias = pd.DataFrame(columns=['manchete', 'subtopico', 'link', 'topico', 'jornal'], index=[0, 1, 2, 3, 4, 5])
 
         for i, noticia in enumerate(caixas_destaque):
-
             subtopico = '-'
-            manchete = noticia.find('h3', class_ = 'css-fsvegl').a.span.p.text
-            link = noticia.find('h3', class_ = 'css-fsvegl').a['href']
+            # Tenta encontrar a tag <h3> com a classe esperada
+            h3_tag = noticia.find('h3', class_='css-fsvegl')
+            if h3_tag:
+                a_tag = h3_tag.find('a')
+            else:
+                a_tag = None
+
+            if a_tag:
+                span_tag = a_tag.find('span')
+            else:
+                span_tag = None
+
+            if span_tag:
+                # Tenta encontrar um <p> dentro de <span>; se não houver, usa o próprio texto de <span>
+                p_tag = span_tag.find('p')
+                if p_tag:
+                    manchete = p_tag.text.strip()
+                else:
+                    manchete = span_tag.text.strip()
+            else:
+                manchete = "Sem manchete"
+
+            # Para o link, tenta acessar o href do a_tag
+            link = a_tag['href'] if a_tag and a_tag.has_attr('href') else "Não encontrado"
 
             df_noticias.loc[i, 'subtopico'] = subtopico
             df_noticias.loc[i, 'manchete'] = manchete
@@ -397,11 +444,8 @@ def wsj(tema):
             df_noticias.loc[i, 'topico'] = tema
             df_noticias.loc[i, 'jornal'] = 'wsj'
 
-            if i == 5:
-
+            if i == (len(caixas_destaque) - 1) or i == 5:
                 break
-
-        return df_noticias
 
 
 def ft(tema):
@@ -571,7 +615,8 @@ def scraping_noticias():
 
     print(noticias)
 
-    noticias.to_csv("noticias.csv", index = False)
+    noticias_path_csv = os.path.join(DATA_DIR, "noticias.csv")
+    noticias.to_csv(noticias_path_csv, index = False)
 
 if __name__ == "__main__":
     

@@ -3,20 +3,23 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
+import os
 import time
+from datetime import timedelta
 from datetime import datetime
-import datetime
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
 #erro = 'NoSuchElementException'
 
 def webscrapping_di() -> pd.DataFrame:
 
-    hoje = datetime.datetime.now()
-    um_ano_atras = hoje - datetime.timedelta(days = 365)
-    tres_anos_atras = hoje - datetime.timedelta(days = 3*365)
-    cinco_anos_atras = hoje - datetime.timedelta(days = 5*365)
-    dez_anos_atras = hoje - datetime.timedelta(days = 10*365)
+    hoje = datetime.now()
+    um_ano_atras = hoje - timedelta(days = 365)
+    tres_anos_atras = hoje - timedelta(days = 3*365)
+    cinco_anos_atras = hoje - timedelta(days = 5*365)
+    dez_anos_atras = hoje - timedelta(days = 10*365)
     
     lista_datas = [hoje, um_ano_atras, tres_anos_atras, cinco_anos_atras, dez_anos_atras]
     lista_nomes = ['hoje', 'um_ano_atras', 'tres_anos_atras', 'cinco_anos_atras', 'dez_anos_atras']
@@ -51,7 +54,7 @@ def webscrapping_di() -> pd.DataFrame:
 
                 print(f'Erro ao acessar a URL em {data_teste}: {e}')
 
-            data_pontual = data_pontual - datetime.timedelta(days= 1)
+            data_pontual = data_pontual - timedelta(days= 1)
 
         #driver.quit()
 
@@ -72,7 +75,8 @@ def webscrapping_di() -> pd.DataFrame:
         return None
     
     dados_di = pd.concat(lista_dfs, ignore_index=True)
-    dados_di.to_csv('dados_di.csv', index = False)
+    dados_di_path_csv = os.path.join(DATA_DIR, "dados_di.csv")
+    dados_di.to_csv(dados_di_path_csv, index = False)
 
     return dados_di
 
