@@ -1,6 +1,6 @@
 from src.dash_py_mercado_financeiro.app import *
 import dash_bootstrap_components as dbc
-from dash import Dash, html, dcc, dash_table, callback
+from dash import Dash, html
 from dash.dependencies import Input, Output
 from src.components import (
     ativos_ao_vivo, 

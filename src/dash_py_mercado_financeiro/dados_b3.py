@@ -12,6 +12,10 @@ from datetime import date
 import zipfile
 import os
 
+# P/ acessar pasta './data'
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")) # p/ voltar duas pastas
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
 def setores_bolsa(caminho_downloads):
 
     options = Options()
@@ -58,7 +62,9 @@ def setores_bolsa(caminho_downloads):
 
     os.remove(caminho_downloads + r"\ClassifSetorial.zip")
 
-    setores.to_csv("setores.csv", index = False)
+    path_csv_setores = os.path.join(DATA_DIR, "setores.csv")
+
+    setores.to_csv(path_csv_setores, index = False)
 
 
 
@@ -116,7 +122,8 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    caminho_downloads = os.getenv("caminho_downloads")
+    # Acesse seu path padrão de downloads
+    caminho_downloads = os.getenv("caminho_downloads") # Path informado dentro do .env
 
     composicao_ibov(caminho_downloads)
     setores_bolsa(caminho_downloads)
