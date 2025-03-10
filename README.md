@@ -99,7 +99,7 @@ Configuração de IAM, IP Estatísticos para a instância EC2 na AWS, para mante
 
 ## Arquitetura do Projeto
 
-[!](docs/excalidraw_full.PNG)
+[](docs/excalidraw_full.PNG)
 
 ## Estrutura do projeto
 
