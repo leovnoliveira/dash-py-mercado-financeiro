@@ -83,7 +83,7 @@ def fazer_grafico_di(periodo):
         hoje = datetime.datetime.now() 
         
         dados_di = pd.read_csv(di)
-        dados_di['data_vencimento'] = pd.to_datetime(dados_di['data_vencimento'], errors= 'coerce')
+        dados_di['data_vencimento'] = pd.to_datetime(dados_di['data_vencimento'], fromat = '%b-%y')
         print(dados_di['data_vencimento'].isna().sum())
         
         dados_atuais = dados_di[dados_di['data_preco'] == 'hoje']
@@ -143,7 +143,7 @@ def fazer_grafico_di(periodo):
 def fazer_tabela_di():
 
     df = pd.read_csv(di)
-    df['data_vencimento'] = pd.to_datetime(df['data_vencimento'], errors= 'coerce')
+    df['data_vencimento'] = pd.to_datetime(df['data_vencimento'], format= '%b-%y')
     df = df[df['data_preco'] == 'hoje']
     df = df.set_index('data_vencimento')
     df = df['preco']

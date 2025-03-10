@@ -1,5 +1,5 @@
 import pandas as pd
-from dash import Dash, html, dcc, dash_table, callback
+from dash import html, dcc, dash_table, callback
 from dash.dependencies import Input, Output
 from src.dash_py_mercado_financeiro.funcoes_dd import fazer_grafico_di, fazer_tabela_di, grafico_divida_pib, grafico_dolar, grafico_inflacao, info_divida_pib, info_dolar, info_inflacao
 from src.dash_py_mercado_financeiro.app import *
