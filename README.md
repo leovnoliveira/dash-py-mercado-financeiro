@@ -28,7 +28,7 @@ Aprender a manipular e tratar dados de finanças e economia foi outra motivaçã
 ## Principais Etapas do Projeto
 
 
-1. Coleta e tratamento de dados 
+### 1. Coleta e tratamento de dados 
 
 Uso da biblioteca `python-bcb` para acessar os dados de inflação, divida/PIB e dólar, já tratados e dispostos em formato mensal, trimestral e diário, respectivametne.
 
@@ -40,24 +40,24 @@ Para as notícias, foi uma junção de `selenium` e `bs4` para coletar dados de 
 
 E por fim, mas não menos importantes, utilizamos o terminal do MetaTrder5 para coletar dados de cotações para as ações da B3, mini-índice, mini-dólar e Índice Bovespa (IBOV) e Índice Small Cap (SMLL) por meio da lib proprietária do `MetaTrader5`.
 
-2. Gráficos de ações ao vivo
+### 2. Gráficos de ações ao vivo
 
 Nesta etapa foi utilizada a biblioteca `plotly` para criação e plotagem dos gráficos de cotações.
 
 Com base nos dados de fechamento, variação e ticker coletados direto do terminal do MetaTrader5, plotei gráficos de candlestick para as ações.
 
-3. Tabela dos principais ativos, maiores altas e maiores baixas do Ibovespa
+### 3. Tabela dos principais ativos, maiores altas e maiores baixas do Ibovespa
 
 Inicialmente, carrego os tickers da bolsa do arquivo `setores.csv` dentro da pasta `data` e puxo as cotações em tempo real da função `puxar_cotacao` do script `dados_mtr_cotacoes.py`, filtro as ações de maior liquidez (>=1000000 vol_movimento_diario).
 
 As maiores altas são as cinco ações que tiveram maior retorno no último dia, enquanto que as maiores baixas são as cinco ações que tiveram menor retorno no último dia.
 
-4. Setores da Bolsa
+### 4. Setores da Bolsa
 
 Há também duas tabelas de visualização do ticker, preço e retorno das ações da B3, mas filtradas por setor. Fiz um callback que filtra a visualização dos dados por setores, como por exemplo: construção civil, transporte, petróleo, gás e biocombustíveis, mineração, dentre outros. 
 
 
-5. Gráficos de Economia
+### 5. Gráficos de Economia
 
 Novamente por meio da biblioteca `plotly`, criamos inicialmente o layout da figura, adicionamos os traços desejados, bem como os atributos estéticos, uma função para atualizar o layout e, por fim, usar os dados carregados dentro da pasta `data` para plotar os index e valores na figura.
 
@@ -65,17 +65,17 @@ Os indicadores são: juros DI, inflação, dólar e dívida/PIB. Há callbacks q
 
 Em juros DI é possível ver duas curvas: um para os contratos de juros com as expectativas atuais (dados_novos), e outra curva com os contratos das expectatvias do momento em questão, como em um ano, três, cinco e de 10 anos atrás, do seu momento em questão até 2032.
 
-6. Info de Estatísticas de Indicadores Econômicos.
+### 6. Info de Estatísticas de Indicadores Econômicos.
 
 Primeiramente, crio funções para realizar os cálculos de média e variação. As variações são dos últimos doze meses, e acumulada no ano. 
 
-7. Notícias
+### 7. Notícias
 
 As notícias estão no segundo painel: um painel chamado Notícias.
 
 Nesse painel, possuem dois layouts principais: o layout Brasil e o layout Mundo. Em cada um deles, possuem dois sublyaouts, que são destinados às notícias de economia, e outro para as notícias de tecnologia. No Brasil, o callback mostra notícias do G1, do Brazil Journal e do Valor Econômico. Enquanto na aba Mundo, os callbacks são Fortune 500, Financial Times e Wall Street Journal, com um adicional do botão Deep-Dive, que mostra as últimas notícias e novidades sobre IA.
 
-8. Deploy
+### 8. Deploy
 
 Configuração de IAM, IP Estatísticos para a instância EC2 na AWS, para manter o dashboard ligado na nuvem. Usou-se um arquivo yaml para manter a rotina de atualização dos dados a cada um hora via GitHub Actions.
 
@@ -99,11 +99,69 @@ Configuração de IAM, IP Estatísticos para a instância EC2 na AWS, para mante
 
 ## Arquitetura do Projeto
 
-[](docs/excalidraw_full.PNG)
+<img src = 'docs/excalidraw_full.PNG' />
 
 ## Estrutura do projeto
 
-....
+```
+DASH-PY-MERCADO-FINANCEIRO
+│   .gitignore
+│   .python-version
+│   poetry.lock
+│   pyproject.toml
+│   README.md
+│   
+├───data
+│   │   comp_ibov.csv
+│   │   cotacoes.parquet
+│   │   dados_di.csv
+│   │   divida_pib.csv
+│   │   dolar.csv
+│   │   inflacao.csv
+│   │   noticias.csv
+│   │   setores.csv
+│   │   tickers.csv
+│
+├───docs
+│   │   dashboard_model.PNG
+│   │   excalidraw_full.PNG
+│
+├───src
+│   ├───components
+│   │   │   __init__.py
+│   │   │   ativos_ao_vivo.py
+│   │   │   economia.py
+│   │   │   graficos_ativos.py
+│   │   │   noticias.py
+│   │   │   setores.py
+│   │
+│   ├───dash_py_mercado_financeiro
+│   │   │   __init__.py
+│   │   │   app.py
+│   │   │   dados_b3.py
+│   │   │   dados_bacen.py
+│   │   │   dados_di.py
+│   │   │   dados_mt5_cotacoes.py
+│   │   │   dados_noticias.py
+│   │   │   formato.py
+│   │   │   funcoes_dd.py
+│   │   │   rotinas.py
+│
+├───tests
+│   │   __init__.py
+│   │   __main__.py
+│   │   .gitignore
+│
+└───assets
+    │   __init__.py
+    │   style.css
+    │   bj.png
+    │   fortune.png
+    │   ft.png
+    │   g1.png
+    │   valor.png
+    │   wsj.png
+```
 
 ## Como Executar o Projeto
 
@@ -171,5 +229,5 @@ Python 3.13.1 (Dec. 3, 2024)
 
 Utilizou-se o pacote `pyenv` para gerenciar e instalar versões do python na minha máquina, a qual pode ser consultada em [python-version](./.python-version).
 
-Para utilizar a mesma versão do python que a minha, você precisa baixá-la. Para não precisar baixar manualmente dentro do site do [python](python.org/downloads), utilize a biblioteca 
+Para utilizar a mesma versão do python que a minha, você precisa baixá-la. Para não precisar baixar manualmente dentro do site do [python](python.org/downloads), utilize a biblioteca [`pyenv`](https://github.com/pyenv/pyenv).
 
