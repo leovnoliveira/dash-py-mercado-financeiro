@@ -1,11 +1,9 @@
-import pandas as pd
-import numpy as np
 import os
+import pandas as pd
 import datetime
 import plotly.graph_objects as go
 import plotly.io as pio
 from src.dash_py_mercado_financeiro.dados_mt5_cotacoes import pegando_todos_os_tickers, puxando_cotacoes
-
 
 # Carregar diretório na raiz do projeto
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")) # ../../ p/ voltar duas pastas
@@ -19,10 +17,10 @@ dados_inflacao = os.path.join(DATA_DIR, 'inflacao.csv')
 dados_dolar = os.path.join(DATA_DIR, 'dolar.csv')
 dados_divida_pib = os.path.join(DATA_DIR, 'divida_pib.csv')
 
+
 def criando_grafico_acao(acao):
         
         dados = pd.read_parquet(cotacoes)
-        print(dados)
         dados['time'] = pd.to_datetime(dados['time'])
         dados = dados.set_index('time')
         acao_grafico = dados[dados['ticker'] == acao]
@@ -83,12 +81,11 @@ def fazer_grafico_di(periodo):
         hoje = datetime.datetime.now() 
         
         dados_di = pd.read_csv(di)
-        dados_di['data_vencimento'] = pd.to_datetime(dados_di['data_vencimento'], fromat = '%b-%y')
-        print(dados_di['data_vencimento'].isna().sum())
+        dados_di['data_vencimento'] = pd.to_datetime(dados_di['data_vencimento']).dt.date
         
         dados_atuais = dados_di[dados_di['data_preco'] == 'hoje']
         dados_atuais = dados_atuais.set_index('data_vencimento')
-        dados_atuais = dados_atuais['preco']
+        dados_atuais = dados_atuais['preço']
 
         if periodo == '1 ano':
              
@@ -115,7 +112,7 @@ def fazer_grafico_di(periodo):
             data_antiga = data_antiga.strftime("%d/%m/%Y")
         
         dados_antigos = dados_antigos.set_index('data_vencimento')
-        dados_antigos = dados_antigos['preco']
+        dados_antigos = dados_antigos['preço']
         
         hoje = hoje.strftime("%d/%m/%Y")
 
@@ -143,10 +140,10 @@ def fazer_grafico_di(periodo):
 def fazer_tabela_di():
 
     df = pd.read_csv(di)
-    df['data_vencimento'] = pd.to_datetime(df['data_vencimento'], format= '%b-%y')
+    df['data_vencimento'] = pd.to_datetime(df['data_vencimento'])
     df = df[df['data_preco'] == 'hoje']
     df = df.set_index('data_vencimento')
-    df = df['preco']
+    df = df['preço']
 
     hoje = datetime.datetime.now()
     ano_atual = hoje.year
@@ -165,38 +162,24 @@ def fazer_tabela_di():
 def info_inflacao():
     
     inflacao = pd.read_csv(dados_inflacao)
-    inflacao['Date'] =  pd.to_datetime(inflacao['Date'], errors= 'coerce')
-    inflacao = inflacao.set_index('Date')
     hoje = datetime.datetime.now()
     ano_atual = hoje.year
+    inflacao = inflacao.set_index('Date')
+    inflacao.index = pd.to_datetime(inflacao.index)
 
- 
     inflacao = inflacao.iloc[-12:, :]
-    inflacao_ano = inflacao.loc[str(ano_atual)].to_frame() # Evita conversão para escalar
-    
-    # Verificar se o valor para a última linha do IPCA é NaN
-    if pd.isna(inflacao.iloc[-1, 0]):
-        inflacao_ano = inflacao.iloc[-1, 0] = inflacao.iloc[-2, 0]
 
-    if pd.isna(inflacao.iloc[-1, 0]):
-        inflacao_12m = inflacao.iloc[-1, 0] = inflacao.iloc[-2,0]
-
-
-
-    # Calcular os inflacões acumuladas, desconsiderando o NaN
     inflacao_12m = (1 + inflacao).cumprod() - 1
+    inflacao_ano = inflacao.loc[f'{ano_atual}']
     inflacao_ano = (1 + inflacao_ano).cumprod() - 1
-
-    
 
     IPCA_12M = str(round((inflacao_12m.iloc[-1, 0] * 100), 2)) + "%"
     IGPM_12M = str(round((inflacao_12m.iloc[-1, 1] * 100), 2)) + "%"
     IPCA_ANO = str(round((inflacao_ano.iloc[-1, 0] * 100), 2)) + "%"
     IGPM_ANO = str(round((inflacao_ano.iloc[-1, 1] * 100), 2)) + "%"
 
+    df = pd.DataFrame({"ignore_1": ["IPCA 12M", 'IGPM 12M', 'IPCA ANO', 'IGPM ANO'], 'ignore_2': [IPCA_12M, IGPM_12M, IPCA_ANO, IGPM_ANO]})
 
-    df = pd.DataFrame({'ignore_1': ["IPCA 12M", 'IGP-M 12M', 'IPCA ANO', 'IGP-M ANO'],
-                       'ignore_2': [IPCA_12M, IGPM_12M, IPCA_ANO, IGPM_ANO]})
     return df
 
 def grafico_inflacao(anos):
@@ -253,11 +236,9 @@ def info_divida_pib():
     hoje = datetime.datetime.now()
     ano_passado = hoje.year - 1
     dados = dados.set_index('Date')
-    dados.index = pd.to_datetime(dados.index, errors= 'coerce')
+    dados.index = pd.to_datetime(dados.index)
     
     dados = dados.iloc[-13:, :]
-
-
 
     VALOR_ATUAL = str(round((dados.iloc[-1, 0] * 100), 2)) + "%"
     VAR_12M = str(round(((dados.iloc[-1, 0] - dados.iloc[1, 0]) * 100), 2)) + "%" 
@@ -275,36 +256,30 @@ def grafico_divida_pib(anos):
     pio.templates.default = "simple_white"
     
     dados = pd.read_csv(dados_divida_pib)
-    dados['Date'] = pd.to_datetime(dados['Date'], errors= 'coerce')
     dados = dados.set_index('Date')
+    dados.index = pd.to_datetime(dados.index)
 
-    hoje = datetime.datetime.now()
     if anos == '1 ano':
 
-        filtro_data = hoje - datetime.timedelta(days= 365)
+        dados = dados.iloc[-252:, :]
 
     elif anos == '3 anos':
 
-         filtro_data = hoje - datetime.timedelta(days= 3*365)
+        dados = dados.iloc[-(252 * 3):, :]
     
     elif anos == '5 anos':
 
-         filtro_data = hoje - datetime.timedelta(days= 5*365)
+        dados = dados.iloc[-(252 * 5):, :]
 
     elif anos == '10 anos':
 
-         filtro_data = hoje - datetime.timedelta(days= 10*365)
-    else:
-        filtro_data = dados.index.min() 
-
-    # Filtrar os dados pelo intervalo de tempo
-    dados_filtrados = dados[dados.index >= filtro_data]
+        dados = dados.iloc[-(252 * 10):, :]
 
     layout = go.Layout(yaxis=dict(tickformat=".2%", tickfont=dict(color="#D3D6DF"), showline = False),
                         xaxis=dict(tickfont=dict(color="#D3D6DF"), showline = False))
 
     fig_divida_pib = go.Figure(data=[
-        go.Scatter(name='Dívida PIB', x=dados_filtrados.index, y=dados_filtrados['DIVIDA_PIB'], marker_color='royalblue')
+        go.Scatter(name='Dívida PIB', x=dados.index, y=dados['DIVIDA_PIB'], marker_color='royalblue')
     ], layout=layout)
 
     fig_divida_pib.update_layout(font = dict(color = "#D3D6DF"), margin=dict(l=24, r=45, t=31, b=23))
@@ -321,21 +296,14 @@ def grafico_divida_pib(anos):
 def info_dolar():
 
     dados = pd.read_csv(dados_dolar)
+    hoje = datetime.datetime.now()
+    ano_passado = hoje.year - 1
     dados = dados.set_index('Date')
     dados.index = pd.to_datetime(dados.index)
-    hoje = datetime.datetime.now()
-    um_ano_atras = datetime.datetime.now() - datetime.timedelta(days = 365)
-    # Encontrar a data mais próxima no dataset
-    data_mais_proxima = dados.index.asof(um_ano_atras) 
-    ano_passado = hoje.year - 1
-
-    print(f"A data mais próxima de {um_ano_atras} no inflaca.csv é {data_mais_proxima}")
-    print(f"O dolar em {data_mais_proxima} foi de {dados.loc[data_mais_proxima].iloc[0]}")
-    
 
     VALOR_ATUAL = "R$" + str(round((dados.iloc[-1, 0]), 2))
-    VAR_12M = str(round((((dados.iloc[-1, 0] - dados.loc[data_mais_proxima].iloc[0])/dados.loc[data_mais_proxima].iloc[0]) * 100), 2)) + "%" 
-    VAR_ANO = str(round((((dados.iloc[-1, 0] - dados.loc[f'{ano_passado}'].iloc[-1, 0]) / dados.loc[f'{ano_passado}'].iloc[-1, 0]) * 100), 2)) + "%"  
+    VAR_12M = str(round(((dados.iloc[-1, 0]/dados.iloc[1, 0]) - 1), 2)) + "%" 
+    VAR_ANO = str(round(((dados.iloc[-1, 0] / dados.loc[f'{ano_passado}'].iloc[-1, 0]) - 1), 2)) + "%"  
     VOL = str(round(((dados.pct_change().std().iloc[0] * 15.87) * 100), 2)) + "%"  
 
     df = pd.DataFrame({"ignore_1": ['VALOR ATUAL', 'Δ 12M', 'Δ ANO', 'VOL'], 'ignore_2': [VALOR_ATUAL, VAR_12M, VAR_ANO, VOL]})

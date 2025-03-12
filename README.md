@@ -1,8 +1,23 @@
 # Dashbaord de indicadores financeiros, econômicos e notícias 
 
+![Status](https://img.shields.io/badge/Status-Finalizado-green)
+
 Bem-vindos ao repositório do site open-source para visualização de dados econômicos e financeiros em tempo real!
 
+## Conteúdos 
+
+- [Sobre o Projeto](#sobre-projeto)
+- [Objetivo do Caso de Estudo](#objetivo-do-caso-de-estudo)
+- [Principais Etapas do Projeto](#principais-etapas-do-projeto)
+- [Arquitetura do Projeto](#arquitetura-do-projeto)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Como Executar o Projeto](#como-executar-o-projeto)
+- [Acessando o site de análises](#acessando-o-site-de-análises)
+<!-- - [Further Improvements](#further-improvements) -->
+
 ## Sobre o projeto
+
 
 Este projeto se trata de um site em dashboard para acompanhamento de ativos de mercado financeiro em tempo real. 
 
@@ -13,13 +28,15 @@ O layout do dashboard foi feito com a biblioteca [`dash`](https://dash.plotly.co
 Este dashboard está dividido em:
 
 
-A) Índices de mercado em tempo real (mini-índice, mini-dolar, índice de small caps e ibovespa)
-B) Gráficos de ativos em tempo real (ações das empresas da B3)
-C) Indicadores econômicos (inflação, dívida/PIB, dólar, curva de juros)
-D) Estatísticas (inflação, dívida/PIB, dólar, curva de juros)
-E) Notícias de Economia e Tecnologia (Brasil e Mundo)
+- Índices de mercado em tempo real (mini-índice, mini-dolar, índice de small caps e ibovespa)
+- Gráficos de ativos em tempo real (ações das empresas da B3)
+- Indicadores econômicos (inflação, dívida/PIB, dólar, curva de juros)
+- Estatísticas (inflação, dívida/PIB, dólar, curva de juros)
+- Notícias de Economia e Tecnologia (Brasil e Mundo)
 
 ## Objetivos do Projeto
+
+[Topo ⤴︎](#conteúdos)
 
 O principal objetivo foi coletar os dados de diversas fontes, tratar e carregar esses dados para geração das tabelas e gráficos. Para tanto, realizou-se uma organização inteligente por meio de pastas, para que cada função ou arquivo pudesse carregar os dados tratados de um só lugar.
 
@@ -27,8 +44,9 @@ Aprender a manipular e tratar dados de finanças e economia foi outra motivaçã
 
 ## Principais Etapas do Projeto
 
+[Topo ⤴︎](#conteúdos)
 
-### 1. Coleta e tratamento de dados 
+### 🛢️ 1. Coleta e tratamento de dados 
 
 Uso da biblioteca `python-bcb` para acessar os dados de inflação, divida/PIB e dólar, já tratados e dispostos em formato mensal, trimestral e diário, respectivametne.
 
@@ -40,24 +58,24 @@ Para as notícias, foi uma junção de `selenium` e `bs4` para coletar dados de 
 
 E por fim, mas não menos importantes, utilizamos o terminal do MetaTrder5 para coletar dados de cotações para as ações da B3, mini-índice, mini-dólar e Índice Bovespa (IBOV) e Índice Small Cap (SMLL) por meio da lib proprietária do `MetaTrader5`.
 
-### 2. Gráficos de ações ao vivo
+### 📈 2. Gráficos de ações ao vivo
 
 Nesta etapa foi utilizada a biblioteca `plotly` para criação e plotagem dos gráficos de cotações.
 
 Com base nos dados de fechamento, variação e ticker coletados direto do terminal do MetaTrader5, plotei gráficos de candlestick para as ações.
 
-### 3. Tabela dos principais ativos, maiores altas e maiores baixas do Ibovespa
+### 📈📉 3. Tabela dos principais ativos, maiores altas e maiores baixas do Ibovespa 
 
 Inicialmente, carrego os tickers da bolsa do arquivo `setores.csv` dentro da pasta `data` e puxo as cotações em tempo real da função `puxar_cotacao` do script `dados_mtr_cotacoes.py`, filtro as ações de maior liquidez (>=1000000 vol_movimento_diario).
 
 As maiores altas são as cinco ações que tiveram maior retorno no último dia, enquanto que as maiores baixas são as cinco ações que tiveram menor retorno no último dia.
 
-### 4. Setores da Bolsa
+### 🚛 4. Setores da Bolsa 
 
 Há também duas tabelas de visualização do ticker, preço e retorno das ações da B3, mas filtradas por setor. Fiz um callback que filtra a visualização dos dados por setores, como por exemplo: construção civil, transporte, petróleo, gás e biocombustíveis, mineração, dentre outros. 
 
 
-### 5. Gráficos de Economia
+### 💰 5. Gráficos de Economia
 
 Novamente por meio da biblioteca `plotly`, criamos inicialmente o layout da figura, adicionamos os traços desejados, bem como os atributos estéticos, uma função para atualizar o layout e, por fim, usar os dados carregados dentro da pasta `data` para plotar os index e valores na figura.
 
@@ -65,24 +83,26 @@ Os indicadores são: juros DI, inflação, dólar e dívida/PIB. Há callbacks q
 
 Em juros DI é possível ver duas curvas: um para os contratos de juros com as expectativas atuais (dados_novos), e outra curva com os contratos das expectatvias do momento em questão, como em um ano, três, cinco e de 10 anos atrás, do seu momento em questão até 2032.
 
-### 6. Info de Estatísticas de Indicadores Econômicos.
+### 📊 6. Info de Estatísticas de Indicadores Econômicos.
 
 Primeiramente, crio funções para realizar os cálculos de média e variação. As variações são dos últimos doze meses, e acumulada no ano. 
 
-### 7. Notícias
+### 📰 7. Notícias
 
 As notícias estão no segundo painel: um painel chamado Notícias.
 
 Nesse painel, possuem dois layouts principais: o layout Brasil e o layout Mundo. Em cada um deles, possuem dois sublyaouts, que são destinados às notícias de economia, e outro para as notícias de tecnologia. No Brasil, o callback mostra notícias do G1, do Brazil Journal e do Valor Econômico. Enquanto na aba Mundo, os callbacks são Fortune 500, Financial Times e Wall Street Journal, com um adicional do botão Deep-Dive, que mostra as últimas notícias e novidades sobre IA.
 
-### 8. Deploy
+### 🛠️ 8. Deploy
 
 Configuração de IAM, IP Estatísticos para a instância EC2 na AWS, para manter o dashboard ligado na nuvem. Usou-se um arquivo yaml para manter a rotina de atualização dos dados a cada um hora via GitHub Actions.
 
 ## Tecnologias Utilizadas
 
-* Backend
+[Topo ⤴︎](#conteúdos)
 
+💻 **Backend**
+ 
 1. [Pandas](https://pandas.pydata.org/docs/getting_started/index.html#getting-started) para manipulação e análise de dados
 2. [Selenium](https://selenium-python.readthedocs.io/getting-started.html) e [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#quick-starthttps://www.crummy.com/software/BeautifulSoup/bs4/doc/#quick-start) para webscrapping de dados em páginas da internet
 3. [MetaTrader5](https://www.mql5.com/en/book/advanced/python/python_install) para coleta de tickers de ações, índices e mini-contratos, bem como preços e retornos de ativos em tempo real
@@ -92,16 +112,20 @@ Configuração de IAM, IP Estatísticos para a instância EC2 na AWS, para mante
 7. [webdriver-maneger](https://selenium-python.readthedocs.io/getting-started.html) para gerenciar os drivers e plugins java de acesso automatizado à págians da internet.
 8. [python-dotenv](https://github.com/theskumar/python-dotenv) para gerenciamento de variáveis sensíveis
 
-* Frontend
+ 🌐 **Frontend**
 
 1. Biblioteca [Dash](https://dash.plotly.com/?_gl=1*hikrro*_gcl_au*MTgzMDA4MDM3NS4xNzM1NDIyOTQ3*_ga*OTE3NjIyNzU5LjE3MzU0MjI5NDc.*_ga_6G7EE0JNSC*MTc0MTYzNDExMy4xMS4xLjE3NDE2MzQxNjguNS4wLjA.) e [dash-bootstrap-components](https://dash-bootstrap-components.opensource.faculty.ai/docs/quickstart/) para criação dos layouts com coneitos de manipulação de posição de objetos na página com HMTL e atributos estésticos com CSS numa lógica data-table, o que facilita a codagem formato do dashboard.
 
 
 ## Arquitetura do Projeto
 
+[Topo ⤴︎](#conteúdos)
+
 <img src = 'docs/excalidraw_full.PNG' />
 
 ## Estrutura do projeto
+
+[Topo ⤴︎](#conteúdos)
 
 ```
 DASH-PY-MERCADO-FINANCEIRO
@@ -165,6 +189,8 @@ DASH-PY-MERCADO-FINANCEIRO
 
 ## Como Executar o Projeto
 
+[Topo ⤴︎](#conteúdos)
+
 Para rodar o projeto em qualquer máquina, realize as etapas:
 
 1. Clonar o Repositório
@@ -223,11 +249,22 @@ poetry run python -m src.dash_py_mercado_financeiro.formato
 
 ## Python Version
 
+[Topo ⤴︎](#conteúdos)
+
 Python 3.13.1 (Dec. 3, 2024)
 
 ## Versionamento
+
+[Topo ⤴︎](#conteúdos)
 
 Utilizou-se o pacote `pyenv` para gerenciar e instalar versões do python na minha máquina, a qual pode ser consultada em [python-version](./.python-version).
 
 Para utilizar a mesma versão do python que a minha, você precisa baixá-la. Para não precisar baixar manualmente dentro do site do [python](python.org/downloads), utilize a biblioteca [`pyenv`](https://github.com/pyenv/pyenv).
 
+## Acessando o dashboard
+
+[Topo ⤴︎](#conteúdos)
+
+Após executar o comando que roda o dashboarde, abra o navegador e acesse http://localhost:8501 para a aplicação web!
+
+Ou clique aqui. 

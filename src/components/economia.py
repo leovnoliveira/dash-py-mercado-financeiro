@@ -1,57 +1,55 @@
-import pandas as pd
-from dash import html, dcc, dash_table, callback
+import dash_bootstrap_components as dbc
+from dash import Dash, html, dcc, dash_table, callback
 from dash.dependencies import Input, Output
-from src.dash_py_mercado_financeiro.funcoes_dd import fazer_grafico_di, fazer_tabela_di, grafico_divida_pib, grafico_dolar, grafico_inflacao, info_divida_pib, info_dolar, info_inflacao
 from src.dash_py_mercado_financeiro.app import *
-
+from src.dash_py_mercado_financeiro.funcoes_dd import fazer_grafico_di, fazer_tabela_di, grafico_divida_pib, grafico_dolar, grafico_inflacao, info_divida_pib, info_dolar, info_inflacao
 
 lista_indicadores = ['DI', 'INFLAÇÃO', 'DÓLAR', 'DÍVIDA/PIB']
 lista_periodos = ['1 ano', '3 anos', '5 anos', '10 anos']
 
+layout = html.Div([
+    
+            dbc.Row([
 
+                dbc.Col([
 
-layout = html.Div(
+                    dbc.Row([
 
-                    [dbc.Row(
-                                [dbc.Col(
-                                            [dbc.Row(
-                                                        [dbc.Col(html.Div(dcc.Dropdown(lista_indicadores,
-                                                                                       value = 'DI',
-                                                                                       id = 'indicador-economico-graph',
-                                                                                       className = 'dcc-padrao',
-                                                                                       style = {'background-color':
-                                                                                                'black', 'color': 'white'}))),
-                                                        dbc.Col(dcc.Dropdown(lista_periodos, value = '3 anos', id = 'indicador-economico-periodo',
-                                                                             className= 'dcc-padrao', style= {'background-color': 'black', 'color': 'white'}))
-                                                                                                ]),
+                        dbc.Col(html.Div(dcc.Dropdown(lista_indicadores, value = 'DI', id = 'indicador-economico-graph', className = 'dcc-padrao',
+                                                                style = {"background-color": 'black', 'color': 'white'}))),
+                        dbc.Col(dcc.Dropdown(lista_periodos, value = '3 anos', id = 'indicador-economico-periodo', className = 'dcc-padrao',
+                                                                style = {"background-color": 'black', 'color': 'white'}))
 
-                                            dbc.Row(dcc.Graph(style={"width": "100%", 'height': "302px", 'margin-top': '16px', 'width': '90%', 
+                    ]),
+                    dbc.Row(dcc.Graph(style={"width": "100%", 'height': "302px", 'margin-top': '16px', 'width': '90%', 
                                                              'border-radius':'8px',
                                                              'background-color': '#131516', 'border': "2px solid #212946"}, 
-                                                             id ='grafico_economia'), style = {'display': 'flex', 'justify-content': 'center'})
-                                                             ])
-                                ]),
-                                
-                    dbc.Row(
+                                                             id ='grafico_economia'), style={'display': 'flex', 'justify-content': 'center'})
+                ])
+            ]),
 
-                                [html.H3(children= 'Estatísticas', className= 'categorias-dash',
-                                         style= {'width': '96%'})],
-                                         style= {'display': 'flex', 'justify-content': 'center'}
-                    ),
-                    
-                    dbc.Row(
-                                [html.Div(dcc.Dropdown(lista_indicadores, value = 'DI', id = 'indicador-economico-tabela',
-                                                       className= 'dcc-padrao', style= {'background-color': 'black', 'color': 'white',
-                                                                                        'margin-top': '9px'}),
-                                                                                        style= {'width': '50%', 'margin-bottom': '16px'}),
-                                                                                        
-                                html.Div(id = 'estatisticas-economicas', style= {'margin-top': '12px'})]
-                    )],
-                    style= {'margin-top': '24px'})
+            dbc.Row([
+
+                html.H3(children="Estatísticas", className='categorias-dash', style = {'width': '96%'})
+
+            ], style= {'display': 'flex', 'justify-content': 'center'}),
+
+            dbc.Row([
+
+                html.Div(dcc.Dropdown(lista_indicadores, value = 'DI', id = 'indicador-economico-tabela', className = 'dcc-padrao',
+                                                                style = {"background-color": 'black', 'color': 'white', 'margin-top': "9px"}),         
+                                                                style = {"width": "50%"}),
+
+                html.Div(id = 'estatisticas-economicas', style= {'margin-top': "-10px"})
+
+            ])
+                                                       
+
+], style= {'margin-top': '24px'})
 
 
 
-@callback(Output('grafico_economia', 'figure'),
+@app.callback(Output('grafico_economia', 'figure'),
               [Input('indicador-economico-graph', 'value'),
                Input('indicador-economico-periodo', 'value')]) #cada input representa um argumento da função. Reconhece automatico os inputs. 
 
@@ -75,9 +73,8 @@ def update_metrics(indicador, periodo):
 
     return fig
 
-@callback(Output('estatisticas-economicas', 'children'),
+@app.callback(Output('estatisticas-economicas', 'children'),
               Input('indicador-economico-tabela', 'value'))
-
 
 def update_metrics(indicador):
 
@@ -86,7 +83,7 @@ def update_metrics(indicador):
         tabela = fazer_tabela_di()
 
     elif indicador == 'INFLAÇÃO':
-            
+
         tabela = info_inflacao()
 
     elif indicador == 'DÓLAR':
@@ -96,9 +93,6 @@ def update_metrics(indicador):
     elif indicador == 'DÍVIDA/PIB':
 
         tabela = info_divida_pib()
-
-    else:
-        tabela = pd.DataFrame({'ignore_1': [], 'ignore_2': []})
 
 
     return [dash_table.DataTable(columns=[{"name": i, "id": i} for i in tabela.columns],
@@ -130,4 +124,22 @@ def update_metrics(indicador):
                                             'color': '#D3D6DF'
                                         }]
                                                                                 )]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

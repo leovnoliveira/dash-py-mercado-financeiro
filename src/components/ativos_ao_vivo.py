@@ -8,9 +8,7 @@ from dash.dependencies import Input, Output
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 DATA_DIR = os.path.join(BASE_DIR, "data")
-
 path_ibov_csv = os.path.join(DATA_DIR, 'comp_ibov.csv')
-
 
 comp_ibov = pd.read_csv(path_ibov_csv)
 tickers_ibov = comp_ibov['codigos']
@@ -203,16 +201,14 @@ layout =  dbc.Row([dcc.Interval(
 
 
 
-@callback(Output('cotacoes-tempo-real', 'data'),
+@app.callback(Output('cotacoes-tempo-real', 'data'),
               Input('interval-component', 'n_intervals'))
 
 def update_metrics(n):
 
     tickers_escolhidos = gerar_lista_principais()
 
-    df_ao_vivo = puxando_cotacoes(tickers_escolhidos=tickers_escolhidos, principal = True)
-
-    #print('Dados ao vivo', df_ao_vivo)
+    df_ao_vivo = puxando_cotacoes(tickers_escolhidos, principal = True)
 
     df_ao_vivo['Retorno'] = df_ao_vivo['Retorno'].apply(lambda x: round(x , 2))
     df_ao_vivo.iloc[1, 1] = df_ao_vivo.iloc[1, 1]/1000
@@ -222,7 +218,7 @@ def update_metrics(n):
     return df_ao_vivo.to_dict("records")
 
 
-@callback(Output('maiores_baixas', 'data'),
+@app.callback(Output('maiores_baixas', 'data'),
               Input('interval-component-baixas', 'n_intervals'))
 
 def update_metrics(n):
@@ -230,12 +226,10 @@ def update_metrics(n):
     baixas = maiores_baixas(tickers_ibov)
     baixas['Retorno'] = baixas['Retorno'].apply(lambda x: round(x , 2))
     baixas['Preço'] = baixas['Preço'].apply(lambda x: round(x , 2))
-
-    #print("Maiores baixas", baixas)
     
     return baixas.to_dict("records")
 
-@callback(Output('maiores_altas', 'data'),
+@app.callback(Output('maiores_altas', 'data'),
               Input('interval-component-altas', 'n_intervals'))
 
 def update_metrics(n):
@@ -243,8 +237,6 @@ def update_metrics(n):
     altas = maiores_altas(tickers_ibov)
     altas['Retorno'] = altas['Retorno'].apply(lambda x: round(x , 2))
     altas['Preço'] = altas['Preço'].apply(lambda x: round(x , 2))
-
-    #print("Maiores altas", altas)
 
     return altas.to_dict("records")
 
