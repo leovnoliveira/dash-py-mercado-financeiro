@@ -112,6 +112,7 @@ def selecionando_tickers():
 def puxando_cotacoes(tickers_escolhidos: list, principal = False):
 
     df_cotacoes = pd.DataFrame(columns=['Ticker', 'Preço', 'Retorno'], index=list(range(0, len(tickers_escolhidos))))
+    df_cotacoes = df_cotacoes.dropna(subset= "Preço")
 
     for i, ticker in enumerate(tickers_escolhidos):
 

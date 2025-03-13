@@ -20,7 +20,7 @@ dados_divida_pib = os.path.join(DATA_DIR, 'divida_pib.csv')
 
 def criando_grafico_acao(acao):
         
-        dados = pd.read_parquet(cotacoes)
+        dados = pd.read_parquet(cotacoes, engine = 'pyarrow')
         dados['time'] = pd.to_datetime(dados['time'])
         dados = dados.set_index('time')
         acao_grafico = dados[dados['ticker'] == acao]
@@ -81,11 +81,11 @@ def fazer_grafico_di(periodo):
         hoje = datetime.datetime.now() 
         
         dados_di = pd.read_csv(di)
-        dados_di['data_vencimento'] = pd.to_datetime(dados_di['data_vencimento']).dt.date
+        dados_di['data_vencimento'] = pd.to_datetime(dados_di['data_vencimento'], format = "%b-%y", errors = 'coerce')
         
         dados_atuais = dados_di[dados_di['data_preco'] == 'hoje']
         dados_atuais = dados_atuais.set_index('data_vencimento')
-        dados_atuais = dados_atuais['preço']
+        dados_atuais = dados_atuais['preco']
 
         if periodo == '1 ano':
              
@@ -112,7 +112,7 @@ def fazer_grafico_di(periodo):
             data_antiga = data_antiga.strftime("%d/%m/%Y")
         
         dados_antigos = dados_antigos.set_index('data_vencimento')
-        dados_antigos = dados_antigos['preço']
+        dados_antigos = dados_antigos['preco']
         
         hoje = hoje.strftime("%d/%m/%Y")
 
@@ -140,10 +140,10 @@ def fazer_grafico_di(periodo):
 def fazer_tabela_di():
 
     df = pd.read_csv(di)
-    df['data_vencimento'] = pd.to_datetime(df['data_vencimento'])
+    df['data_vencimento'] = pd.to_datetime(df['data_vencimento'], format = "%b-%y", errors = 'coerce' )
     df = df[df['data_preco'] == 'hoje']
     df = df.set_index('data_vencimento')
-    df = df['preço']
+    df = df['preco']
 
     hoje = datetime.datetime.now()
     ano_atual = hoje.year
