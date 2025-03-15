@@ -22,8 +22,7 @@ layout = html.Div([dcc.Dropdown(lista_empresas, value = 'PETR4', id = 'escolher-
 
 @app.callback(
     Output('grafico_candle', 'figure'),
-    Input('escolher-grafico-aovivo', 'value'),
-    prevent_initial_call=True
+    Input('escolher-grafico-aovivo', 'value')
 )
 def update_options(ticker):
     print(f"Callback ativado para o ativo: {ticker}")
@@ -31,7 +30,7 @@ def update_options(ticker):
 
     fig = criando_grafico_acao(ticker)
 
-    return {'data': [], 'layout': {}}, fig
+    return fig
 
 
 

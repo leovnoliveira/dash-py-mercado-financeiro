@@ -20,7 +20,7 @@ dados_divida_pib = os.path.join(DATA_DIR, 'divida_pib.csv')
 
 def criando_grafico_acao(acao):
         
-        dados = pd.read_parquet(cotacoes, engine = 'pyarrow')
+        dados = pd.read_parquet(cotacoes, engine = 'fastparquet')
         dados['time'] = pd.to_datetime(dados['time'])
         dados = dados.set_index('time')
         acao_grafico = dados[dados['ticker'] == acao]
@@ -168,17 +168,37 @@ def info_inflacao():
     inflacao.index = pd.to_datetime(inflacao.index)
 
     inflacao = inflacao.iloc[-12:, :]
-
     inflacao_12m = (1 + inflacao).cumprod() - 1
-    inflacao_ano = inflacao.loc[f'{ano_atual}']
+
+    # Pega os dados apenas do ano atual
+    inflacao_ano = inflacao.loc[str(ano_atual)]
+    if inflacao_ano.empty:
+        print("Não há dados de inflaçãp para o ano atual.")
+        return pd.DataFrame() 
+    
+    # Se vier uma Series, transformar em DataFrame
+    if isinstance(inflacao_ano, pd.Series):
+        inflacao_ano = inflacao_ano.to_frame().T
+
+    # Se houver NaN na última linha
+    if pd.isna(inflacao.iloc[-1, 0]):
+        inflacao.iloc[-1, 0] = inflacao.iloc[-2, 0]
+    if pd.isna(inflacao.iloc[-1, 1]):
+        inflacao.iloc[-1, 1] = inflacao.iloc[-2, 1]
+
+    # Recalcular após os tratamentos
     inflacao_ano = (1 + inflacao_ano).cumprod() - 1
+    inflacao_12m = (1 + inflacao).cumprod() - 1
+
+
 
     IPCA_12M = str(round((inflacao_12m.iloc[-1, 0] * 100), 2)) + "%"
     IGPM_12M = str(round((inflacao_12m.iloc[-1, 1] * 100), 2)) + "%"
     IPCA_ANO = str(round((inflacao_ano.iloc[-1, 0] * 100), 2)) + "%"
     IGPM_ANO = str(round((inflacao_ano.iloc[-1, 1] * 100), 2)) + "%"
 
-    df = pd.DataFrame({"ignore_1": ["IPCA 12M", 'IGPM 12M', 'IPCA ANO', 'IGPM ANO'], 'ignore_2': [IPCA_12M, IGPM_12M, IPCA_ANO, IGPM_ANO]})
+    df = pd.DataFrame({"ignore_1": ["IPCA 12M", 'IGPM 12M', 'IPCA ANO', 'IGPM ANO'],
+                       'ignore_2': [IPCA_12M, IGPM_12M, IPCA_ANO, IGPM_ANO]})
 
     return df
 
@@ -234,16 +254,17 @@ def info_divida_pib():
 
     dados = pd.read_csv(dados_divida_pib)
     hoje = datetime.datetime.now()
-    ano_passado = hoje.year - 1
+    um_ano_atras = hoje - datetime.timedelta(days = 365)
+    ano_passado = um_ano_atras.year
     dados = dados.set_index('Date')
     dados.index = pd.to_datetime(dados.index)
     
-    dados = dados.iloc[-13:, :]
+    dados = dados.iloc[-12:, :]
 
     VALOR_ATUAL = str(round((dados.iloc[-1, 0] * 100), 2)) + "%"
-    VAR_12M = str(round(((dados.iloc[-1, 0] - dados.iloc[1, 0]) * 100), 2)) + "%" 
-    VAR_ANO = str(round(((dados.iloc[-1, 0] - (dados.loc[f'{ano_passado}']).iloc[-1, 0]) * 100), 2)) + "%"  
-    VAR_MES = str(round(((dados.iloc[-1, 0] - dados.iloc[-2, 0]) * 100), 2)) + "%"  
+    VAR_12M = str(round((((dados.iloc[-1, 0] - dados.iloc[1, 0]) / dados.iloc[1, 0]) * 100), 2)) + "%" 
+    VAR_ANO = str(round((((dados.iloc[-1, 0] - (dados.loc[f'{ano_passado}']).iloc[-1, 0]) / dados.loc[f'{ano_passado}'].iloc[-1, 0])  * 100), 2)) + "%"  
+    VAR_MES = str(round((((dados.iloc[-1, 0] - dados.iloc[-2, 0]) / dados.iloc[-2, 0]) * 100), 2)) + "%"  
 
     df = pd.DataFrame({"ignore_1": ['VALOR ATUAL', 'Δ 12M', 'Δ ANO', 'Δ MÊS'], 'ignore_2': [VALOR_ATUAL, VAR_12M, VAR_ANO, VAR_MES]})
 
@@ -259,27 +280,32 @@ def grafico_divida_pib(anos):
     dados = dados.set_index('Date')
     dados.index = pd.to_datetime(dados.index)
 
+    hoje = datetime.datetime.now()
     if anos == '1 ano':
-
-        dados = dados.iloc[-252:, :]
-
+        filtro_data = hoje - datetime.timedelta(days = 365)
+    
     elif anos == '3 anos':
 
-        dados = dados.iloc[-(252 * 3):, :]
+        filtro_data = hoje - datetime.timedelta(days = 365 * 3)
     
     elif anos == '5 anos':
 
-        dados = dados.iloc[-(252 * 5):, :]
+        filtro_data = hoje - datetime.timedelta(days = 365 * 5)
 
     elif anos == '10 anos':
 
-        dados = dados.iloc[-(252 * 10):, :]
+        filtro_data = hoje - datetime.timedelta(days = 365 * 10)
+
+    else:
+        filtro_data = dados.index.min() # Se nenhuma opção for válida, mostrar todos os dados
+
+    dados_filtrados = dados[dados.index >= filtro_data]
 
     layout = go.Layout(yaxis=dict(tickformat=".2%", tickfont=dict(color="#D3D6DF"), showline = False),
                         xaxis=dict(tickfont=dict(color="#D3D6DF"), showline = False))
 
     fig_divida_pib = go.Figure(data=[
-        go.Scatter(name='Dívida PIB', x=dados.index, y=dados['DIVIDA_PIB'], marker_color='royalblue')
+        go.Scatter(name='Dívida PIB', x=dados_filtrados.index, y=dados_filtrados['DIVIDA_PIB'], marker_color='royalblue')
     ], layout=layout)
 
     fig_divida_pib.update_layout(font = dict(color = "#D3D6DF"), margin=dict(l=24, r=45, t=31, b=23))
@@ -296,17 +322,41 @@ def grafico_divida_pib(anos):
 def info_dolar():
 
     dados = pd.read_csv(dados_dolar)
+    dados['Date'] = pd.to_datetime(dados['Date'])
     hoje = datetime.datetime.now()
     ano_passado = hoje.year - 1
     dados = dados.set_index('Date')
     dados.index = pd.to_datetime(dados.index)
 
-    VALOR_ATUAL = "R$" + str(round((dados.iloc[-1, 0]), 2))
-    VAR_12M = str(round(((dados.iloc[-1, 0]/dados.iloc[1, 0]) - 1), 2)) + "%" 
-    VAR_ANO = str(round(((dados.iloc[-1, 0] / dados.loc[f'{ano_passado}'].iloc[-1, 0]) - 1), 2)) + "%"  
+    um_ano_atras = hoje - datetime.timedelta(days = 365)
+    data_mais_proxima_no_csv = dados.index.asof(um_ano_atras)
+
+
+    # Verifica se encontrou a data
+    if data_mais_proxima_no_csv is None:
+        VAR_12M = "N/A"
+    else:
+        valor_12m_passado = dados.loc[data_mais_proxima_no_csv, dados.columns[0]]
+        valor_atual = dados.iloc[-1, 0]
+
+        VAR_12M = str(round(((valor_atual - valor_12m_passado) / valor_12m_passado) * 100, 2)) + "%"
+
+    # Outras estatísticas
+    VALOR_ATUAL = "R$" + str(round(dados.iloc[-1, 0], 2))
+
+
+    dados_ano_passado = dados[dados.index.year == ano_passado]
+
+    if not dados_ano_passado.empty:
+        valor_ano_passado = dados_ano_passado.iloc[-1, 0]
+        VAR_ANO = str(round(((dados.iloc[-1, 0] - valor_ano_passado) / valor_ano_passado) * 100, 2)) + "%"
+    else:
+        VAR_ANO = "N/A"
+
     VOL = str(round(((dados.pct_change().std().iloc[0] * 15.87) * 100), 2)) + "%"  
 
-    df = pd.DataFrame({"ignore_1": ['VALOR ATUAL', 'Δ 12M', 'Δ ANO', 'VOL'], 'ignore_2': [VALOR_ATUAL, VAR_12M, VAR_ANO, VOL]})
+    df = pd.DataFrame({"ignore_1": ['VALOR ATUAL', 'Δ 12M', 'Δ ANO', 'VOL'],
+                       'ignore_2': [VALOR_ATUAL, VAR_12M, VAR_ANO, VOL]})
 
     return df
 

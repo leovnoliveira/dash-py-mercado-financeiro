@@ -141,6 +141,7 @@ def brazil_journal(tema):
     soup = BeautifulSoup(html_not, 'html.parser')
 
     caixas_noticias = soup.find_all('figcaption', class_ = 'boxarticle-infos')
+    print(len(caixas_noticias)) # Para ver quantos elementos foram encontrados
 
     df_noticias = pd.DataFrame(columns=['manchete', 'subtopico', 'link', 'topico', 'jornal'], index=[0, 1, 2, 3, 4, 5])
 

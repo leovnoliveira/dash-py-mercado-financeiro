@@ -107,7 +107,6 @@ def selecionando_tickers():
 
     acoes = pegando_todos_os_tickers()
     tickers_mercado = gerar_lista_principais()
-    
     tickers_totais = acoes + tickers_mercado
 
     for ticker in tickers_totais:
@@ -121,42 +120,54 @@ def selecionando_tickers():
                     print(f"Ticker {ticker} não possui tick info (pode estar indisponível).")
 
 
-def puxando_cotacoes(tickers_escolhidos: list, principal = False):
+def puxando_cotacoes(tickers_escolhidos, principal = False):
     """
     Monta um DataFrame com [Ticker, Preço, Retorno] para cada ticker.
     Faz checagens para evitar AttributeError quando symbol_info(ticker) == None.
+    Se 'principal=False', aplica um filtro de liquidez usando session_deals.
     """
 
-    # 1) Checa se está conectado
+    # Checa se está conectado
     if not mt5.initialize():
         print("Não está conectado ao MetaTrader 5. Chame a mt5.initialize() antes")
         return pd.DataFrame(columns=['Ticker', 'Preço', 'Retorno'])
     
-    df_cotacoes = pd.DataFrame(columns=['Ticker', 'Preço', 'Retorno'], index=range(len(tickers_escolhidos)))
-    df_cotacoes = df_cotacoes.dropna(subset= "Preço")
+    df_cotacoes = pd.DataFrame(columns=['Ticker', 'Preço', 'Retorno'], index=list(range(0, len(tickers_escolhidos))))
 
     for i, ticker in enumerate(tickers_escolhidos):
-
-        if principal == False:
-            # 2) Tenta selecionar o símbolo antes de acessar info
-            if mt5.symbol_info(ticker).session_deals > 10:
-                print(f"Não foi possível selecionar o ticker: {ticker}")
+        
+            # 1) SEelciona o símbolo; se falhar, pula
+            if not mt5.symbol_select(ticker, True):
+                print(f"Não foi possível selecionar o ticker {ticker}")
                 continue
-
+            
+            # Obtem as informações do símbolo
             info = mt5.symbol_info(ticker)
             if info is None:
-                print(f"symbol_info retornou None para {ticker} - símbolo inexistente ou indisponível.")
+                print(f"symbol_info retornou None para o ticker {ticker} - símbolo inexistente ou indisponível")
                 continue
+
+            # Se session_deals for None (mercado fechado), define como 0
+            session_deals = info.session_deals if info.session_deals is not None else 0
+
+            # Se 'principal' for False, podemos filtrar ativos com baixa liquidez.
+            # Originalmente, você usava: if session_deals > 10: continue
+            # Isso faz pular os ativos com alta liquidez (o que não parece desejado).
+            # Se o objetivo é pular ativos ilíquidos, use:
+            if not principal:
+                if session_deals < 10:
+                    print(f"Ticker {ticker} não tem {session_deals} negociações. Pulando este ativo")
+                    continue
 
             # 3) Finalmente, acessmos os atributos (retorno e preço)
 
             retorno = info.price_change
             fechamento = info.last
 
-            df_cotacoes.loc[i, :] = [ticker, fechamento, retorno]
+            df_cotacoes.loc[i] = [ticker, fechamento, retorno]
 
-    # Opcional: remover linhas que não foram preenchidas (NaN)
-    df_cotacoes = df_cotacoes.dropna(subset=['Preço'], inplace= True)
+            # Opcional: remover linhas que não foram preenchidas (NaN)
+    df_cotacoes = df_cotacoes.dropna(subset=['Preço'])
            
     return df_cotacoes
 
@@ -257,11 +268,15 @@ if __name__ == "__main__":
 
     indices = gerar_lista_principais()
 
-    tabela = puxando_cotacoes(tickers_escolhidos=[todas_as_acoes, indices])
-    print("Cotação de IVVB11 e SMAL11:\n", tabela)
+    tickers = todas_as_acoes + indices
+
+    tabela = puxando_cotacoes(tickers_escolhidos=tickers)
+    print("DataFrame de cotações:\n", tabela)
 
     # Exemplo de construção do histórico
-    construcao_historica_cotacoes()
+    historico = construcao_historica_cotacoes()
+    if historico is not None:
+        print("Histórico coletado com sucesso!")
 
 
 
