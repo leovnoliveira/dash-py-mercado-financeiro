@@ -72,6 +72,6 @@ def brazil_journal(tema):
 
 if __name__ == "__main__":
 
-    noticias_bj = brazil_journal(tema='economia')
+    noticias_bj = brazil_journal(tema='tech')
 
     print(noticias_bj)

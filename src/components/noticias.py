@@ -29,7 +29,7 @@ layout_brasil = [
 
                         dbc.Col([html.Img(id = 'imagem-jornal', style = {'max-width': '50px'})]
                                 , style = {'margin-top': '24px'}, md = 1),
-                        dbc.Col([html.Div(dcc.Dropdown(lista_jornais_br, value = 'Valor Econômico', id = 'escolher-jornal-br', className = 'dcc-padrao',
+                        dbc.Col([html.Div(dcc.Dropdown(lista_jornais_br, value = 'Brazil Journal', id = 'escolher-jornal-br', className = 'dcc-padrao',
                                                         style = {"background-color": 'black', 'color': 'white', 'margin': '12px 0px 0px 0px'}
                                                                  ), style = {'width': "25%"})], style = {'margin-top': '24px'})
 

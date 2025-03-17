@@ -16,7 +16,14 @@ Bem-vindos ao repositório do site open-source para visualização de dados econ
 - [Acessando o site de análises](#acessando-o-site-de-análises)
 <!-- - [Further Improvements](#further-improvements) -->
 
+
+<img src = 'docs/panel.PNG' />
+<img src = 'docs/news.PNG' />
+
+
+
 ## Sobre o projeto
+[Topo ⤴︎](#conteúdos)
 
 
 Este projeto se trata de um site em dashboard para acompanhamento de ativos de mercado financeiro em tempo real. 
@@ -121,7 +128,7 @@ Configuração de IAM, IP Estatísticos para a instância EC2 na AWS, para mante
 
 [Topo ⤴︎](#conteúdos)
 
-<img src = 'docs/excalidraw_full.PNG' />
+<img src = 'docs/design_arch.png' />
 
 ## Estrutura do projeto
 
@@ -265,6 +272,6 @@ Para utilizar a mesma versão do python que a minha, você precisa baixá-la. Pa
 
 [Topo ⤴︎](#conteúdos)
 
-Após executar o comando que roda o dashboarde, abra o navegador e acesse http://localhost:8501 para a aplicação web!
+Após executar o comando que roda o dashboarde, abra o navegador e acesse http://127.0.0.1:8051/ para a aplicação web!
 
 Ou clique aqui. 
