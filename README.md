@@ -4,6 +4,9 @@
 
 Bem-vindos ao repositório do site open-source para visualização de dados econômicos e financeiros em tempo real!
 
+<img src = 'docs/panel.PNG' />
+<img src = 'docs/news.PNG' />
+
 ## Conteúdos 
 
 - [Sobre o Projeto](#sobre-projeto)
@@ -15,12 +18,6 @@ Bem-vindos ao repositório do site open-source para visualização de dados econ
 - [Como Executar o Projeto](#como-executar-o-projeto)
 - [Acessando o site de análises](#acessando-o-site-de-análises)
 <!-- - [Further Improvements](#further-improvements) -->
-
-
-<img src = 'docs/panel.PNG' />
-<img src = 'docs/news.PNG' />
-
-
 
 ## Sobre o projeto
 [Topo ⤴︎](#conteúdos)
