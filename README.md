@@ -269,6 +269,6 @@ Para utilizar a mesma versão do python que a minha, você precisa baixá-la. Pa
 
 [Topo ⤴︎](#conteúdos)
 
-Após executar o comando que roda o dashboarde, abra o navegador e acesse http://127.0.0.1:8051/ para a aplicação web!
+Após executar o comando que roda o dashboarde, abra o navegador e acesse http://localhost:8051/ para a aplicação web!
 
-Ou clique aqui. 
+Ou [clique aqui](http://44.197.220.119:8051/). 
