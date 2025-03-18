@@ -24,6 +24,7 @@ dependencies = [
     "pyarrow (>=19.0.1,<20.0.0)",
     "fastparquet (>=2024.11.0,<2025.0.0)",
     "requests (>=2.32.3,<3.0.0)",
+    "openpyxl (>=3.1.5,<4.0.0)",
 ]
 
 [tool.poetry]

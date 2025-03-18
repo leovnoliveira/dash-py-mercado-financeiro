@@ -46,7 +46,7 @@ def setores_bolsa(caminho_downloads):
 
     for planilha in arquivo_zip.namelist():
 
-        setores = pd.read_excel(arquivo_zip.open(planilha), skiprows=6)
+        setores = pd.read_excel(arquivo_zip.open(planilha), engine = "openpyxl", skiprows=6)
 
     arquivo_zip.close()
 

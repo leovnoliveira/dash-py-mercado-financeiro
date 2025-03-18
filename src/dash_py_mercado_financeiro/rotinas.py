@@ -15,7 +15,7 @@ while True:
     def atualizando_rotinas():
 
 
-        caminho_downloads = os.getenv(caminho_downloads) # Caminho da sua pasta download, salvo em .env
+        caminho_downloads = os.getenv("caminho_downloads") # Caminho da sua pasta download, salvo em .env
         selecionando_tickers()
         construcao_historica_cotacoes()
         composicao_ibov(caminho_downloads=caminho_downloads)
