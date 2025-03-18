@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
-from dados_b3 import composicao_ibov, setores_bolsa
-from dados_di import webscrapping_di
-from dados_mt5_cotacoes import construcao_historica_cotacoes, selecionando_tickers
-from dados_bacen import att_divida_pib, att_dolar, att_inflacao
-from dados_noticias import scraping_noticias
+from src.dash_py_mercado_financeiro.dados_b3 import composicao_ibov, setores_bolsa
+from src.dash_py_mercado_financeiro.dados_di import webscrapping_di
+from src.dash_py_mercado_financeiro.dados_mt5_cotacoes import construcao_historica_cotacoes, selecionando_tickers
+from src.dash_py_mercado_financeiro.dados_bacen import att_divida_pib, att_dolar, att_inflacao
+from src.dash_py_mercado_financeiro.dados_noticias import scraping_noticias
 import time
 import os
 
@@ -28,4 +28,4 @@ while True:
 
     atualizando_rotinas()
 
-    time.sleep(86400)
+    time.sleep(60*60)
