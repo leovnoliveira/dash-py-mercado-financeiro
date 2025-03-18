@@ -42,13 +42,16 @@ def setores_bolsa(caminho_downloads):
 
     driver.quit()
 
-    arquivo_zip = zipfile.ZipFile(caminho_downloads + r"\ClassifSetorial.zip")
+    caminho_zip = os.path.join(caminho_downloads + r"\ClassifSetorial.zip")
 
-    for planilha in arquivo_zip.namelist():
+    with zipfile.ZipFile(caminho_zip) as arquivo_zip:
+        # Para cada arquivo dentro do ZIP, garantimos que o objeto aberto seja fechado
+        for planilha_nome in arquivo_zip.namelist():
+            with arquivo_zip.open(planilha_nome) as file:
+                setores = pd.read_excel(file, skiprows= 6, engine = 'openpyxl')
 
-        setores = pd.read_excel(arquivo_zip.open(planilha), engine = "openpyxl", skiprows=6)
-
-    arquivo_zip.close()
+    # agora com o zip fechado, podemos remove-lo sem problemas
+    os.remove(caminho_zip)
 
     setores['SUBSETOR'] = setores['SUBSETOR'].ffill()
 
@@ -59,8 +62,6 @@ def setores_bolsa(caminho_downloads):
     setores = setores.dropna()
 
     setores.columns = ['SETOR', 'NOME', 'TICKER']
-
-    os.remove(caminho_downloads + r"\ClassifSetorial.zip")
 
     path_csv_setores = os.path.join(DATA_DIR, "setores.csv")
 
@@ -115,7 +116,9 @@ def composicao_ibov(caminho_downloads):
 
     ibovespa_comp.columns = ['codigos', 'nome', 'classe', 'qtd', 'part']
 
-    ibovespa_comp.to_csv('comp_ibov.csv', index = False)
+    caminho_comp_csv = os.path.join(DATA_DIR, "comp_ibov.csv")
+
+    ibovespa_comp.to_csv(caminho_comp_csv, index = False)
 
 
 if __name__ == "__main__":

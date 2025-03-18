@@ -1,4 +1,5 @@
 SETOR,NOME,TICKER
+"Petróleo, Gás e Biocombustíveis",AZT ENERGIA,AZTE
 "Petróleo, Gás e Biocombustíveis",BRAVA,BRAV
 "Petróleo, Gás e Biocombustíveis",COSAN       ,CSAN
 "Petróleo, Gás e Biocombustíveis",PET MANGUINH,RPMG
@@ -204,6 +205,7 @@ Viagens e Lazer,TIME FOR FUN,SHOW
 Viagens e Lazer,CVC BRASIL,CVCB
 Viagens e Lazer,SMART FIT,SMFT
 Diversos,ANIMA,ANIM
+Diversos,ATOM EDUC,ATED
 Diversos,BIOMA EDUC,BIED
 Diversos,COGNA ON,COGN
 Diversos,CRUZEIRO EDU,CSED
@@ -262,7 +264,7 @@ Computadores e Equipamentos,POSITIVO TEC,POSI
 Programas e Serviços,BEMOBI TECH,BMOB
 Programas e Serviços,BRQ,BRQB
 Programas e Serviços,ENJOEI,ENJU
-Programas e Serviços,GETNINJAS,NINJ
+Programas e Serviços,REAGINVEST,REAG
 Programas e Serviços,INFRACOMM,IFCM
 Programas e Serviços,LWSA,LWSA
 Programas e Serviços,MELIUZ,CASH
@@ -309,6 +311,7 @@ Energia Elétrica,EQTL PARA,EQPA
 Energia Elétrica,EQTLMARANHAO,EQMA
 Energia Elétrica,EQUATORIAL  ,EQTL
 Energia Elétrica,GER PARANAP ,GEPA
+Energia Elétrica,ISA ENERGIA,ISAE
 Energia Elétrica,LIGHT       ,LIGH
 Energia Elétrica,LIGHT S/A   ,LIGT
 Energia Elétrica,NEOENERGIA  ,NEOE
@@ -316,9 +319,7 @@ Energia Elétrica,SERENA,SRNA
 Energia Elétrica,PROMAN      ,PRMN
 Energia Elétrica,REDE ENERGIA,REDE
 Energia Elétrica,RENOVA      ,RNEW
-Energia Elétrica,SAFIRA ENERG,SAEN
 Energia Elétrica,TAESA       ,TAEE
-Energia Elétrica,ISA ENERGIA,ISAE
 Água e Saneamento,AMBIPAR,AMBP
 Água e Saneamento,CASAN       ,CASN
 Água e Saneamento,COPASA      ,CSMG
@@ -385,6 +386,7 @@ Exploração de Imóveis,SAO CARLOS  ,SCAR
 Exploração de Imóveis,SYN PROP TEC,SYNE
 Exploração de Imóveis,LOPES BRASIL,LPSB
 Exploração de Imóveis,NEXPE,NEXP
+Holdings Diversificadas,CIABRASF,ADMF
 Holdings Diversificadas,ITAUSA      ,ITSA
 Holdings Diversificadas,MONT ARANHA ,MOAR
 Holdings Diversificadas,SIMPAR,SIMH
@@ -393,14 +395,12 @@ Outros Títulos,CEPAC - MCRJ,MCRJ
 Outros Títulos,CEPAC - PMSP,PMSP
 SUBSETOR,SEGMENTO,LISTAGEM
 Outros,524 PARTICIP,QVQP
-Outros,FICTORALIMEN,FICT
 Outros,BETAPART    ,BETP
 Outros,CEMEPE      ,MAPT
-Outros,CIMS        ,CMSA
+Outros,FICTORALIMEN,FICT
 Outros,GAMA PART   ,OPGM
 Outros,INVEST BEMGE,FIGE
 Outros,POLPAR      ,PPAR
 Outros,PROMPT PART ,PRPT
 Outros,SUDESTE S/A ,OPSE
 Outros,SUL 116 PART,OPTS
-Outros,YBYRA S/A,YBRA
