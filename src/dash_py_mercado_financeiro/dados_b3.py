@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import time
 from datetime import date
+from datetime import timedelta
 import zipfile
 import os
 
@@ -94,31 +95,64 @@ def composicao_ibov(caminho_downloads):
 
     driver.quit()
 
-    dia = date.today().day
-    mes = date.today().month
-    ano = date.today().year
+    # ============================================
+    # Lógica para avançar a data até 5 tentativas
+    # ============================================
 
-    if dia < 10:
 
-        dia = "0" + str(dia)
+    dt = date.today()
+    ibovespa_comp = None
+    arquivo_encontrado = False
 
-    if mes < 10:
+    for attempt in range(5):
+         # Se dt cair num fim de semana (sábado=5 ou domingo=6), pule para a próxima segunda
+        if dt.weekday() >= 5:
+            dias_para_segunda = 7 - dt.weekday()
+            dt += timedelta(days=dias_para_segunda)
 
-        mes = "0" + str(mes)
+      
+        dia = dt.strftime("%d")
+        mes = dt.strftime("%m")
+        ano = dt.strftime("%y")
 
-    ano = str(ano)[2:]
+        nome_arquivo = f"IBOVDia_{dia}-{mes}-{ano}.csv"
+        caminho_csv = os.path.join(caminho_downloads, nome_arquivo)
+        print(f"Tentativa {attempt+1}: procurando o arquivo {nome_arquivo}")
 
-    ibovespa_comp = pd.read_csv(caminho_downloads +fr"\IBOVDia_{dia}-{mes}-{ano}.csv", sep = ';',
-                                skipfooter= 2, encoding= 'ISO-8859-1', engine= 'python', decimal= ',',
-                                  thousands= '.', header = 1, index_col = False)
-    
-    os.remove(caminho_downloads + fr"\IBOVDia_{dia}-{mes}-{ano}.csv")
+        try:
+            ibovespa_comp = pd.read_csv(
+                caminho_csv,
+                sep=';',
+                skipfooter=2,
+                encoding='ISO-8859-1',
+                engine='python',
+                decimal=',',
+                thousands='.',
+                header=1,
+                index_col=False
+            )
+            # Se deu certo, remove o arquivo do path de downloads
+            os.remove(caminho_csv)
+            arquivo_encontrado = True
+            print(f"Arquivo encontrado: {nome_arquivo}")
+            break
 
+        except FileNotFoundError:
+            print(f"Arquivo não encontrado para a data {dt.strftime('%d-%m-%y')}. Tentando o próximo dia útil...")
+            dt += timedelta(days=1)
+
+    # Se depois de 5 tentativas não encontrou, lança erro
+    if not arquivo_encontrado or ibovespa_comp is None:
+        raise FileNotFoundError("Não foi possível encontrar o arquivo IBOVDia nos próximos 5 dias úteis.")
+        
+
+        # --------------------------------------------
+        # Continuação do código de tratamento do DataFrame
+        # --------------------------------------------
     ibovespa_comp.columns = ['codigos', 'nome', 'classe', 'qtd', 'part']
-
+            
     caminho_comp_csv = os.path.join(DATA_DIR, "comp_ibov.csv")
-
-    ibovespa_comp.to_csv(caminho_comp_csv, index = False)
+    ibovespa_comp.to_csv(caminho_comp_csv, index=False)
 
 
 if __name__ == "__main__":
