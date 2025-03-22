@@ -1,11 +1,11 @@
-# Dashbaord de indicadores financeiros, econômicos e notícias 
+# Dashboard de indicadores financeiros, econômicos e notícias 
 
 ![Status](https://img.shields.io/badge/Status-Finalizado-green)
 
 Bem-vindos ao repositório do site open-source para visualização de dados econômicos e financeiros em tempo real!
 
-<img src = 'docs/panel.PNG' />
-<img src = 'docs/news.PNG' />
+<img src = 'docs/dash_economic_and_financial_capital.PNG' />
+<img src = 'docs/dash_economic_and_financial_news.PNG' />
 
 ## Conteúdos 
 
@@ -32,11 +32,12 @@ O layout do dashboard foi feito com a biblioteca [`dash`](https://dash.plotly.co
 Este dashboard está dividido em:
 
 
-- Índices de mercado em tempo real (mini-índice, mini-dolar, índice de small caps e ibovespa)
-- Gráficos de ativos em tempo real (ações das empresas da B3)
-- Indicadores econômicos (inflação, dívida/PIB, dólar, curva de juros)
-- Estatísticas (inflação, dívida/PIB, dólar, curva de juros)
-- Notícias de Economia e Tecnologia (Brasil e Mundo)
+- Índices de mercado em tempo real (mini-índice, mini-dolar, índice de small caps e ibovespa);
+- Gráficos de ativos em tempo real (ações das empresas da B3);
+- Cotações de ações da B3 em tempo real por setores;
+- Indicadores econômicos (inflação, dívida/PIB, dólar, curva de juros);
+- Estatísticas (inflação, dívida/PIB, dólar, curva de juros);
+- Notícias de Economia e Tecnologia (Brasil e Mundo);
 
 ## Objetivos do Projeto
 
@@ -44,7 +45,7 @@ Este dashboard está dividido em:
 
 O principal objetivo foi coletar os dados de diversas fontes, tratar e carregar esses dados para geração das tabelas e gráficos. Para tanto, realizou-se uma organização inteligente por meio de pastas, para que cada função ou arquivo pudesse carregar os dados tratados de um só lugar.
 
-Aprender a manipular e tratar dados de finanças e economia foi outra motivação para este projeto, dado a cursiosidade e expertise que tenho neste assunto. Além disso, serve como ferramente de tomada de decisão para investidores brasileiros usar como insumo para acompanhamento do mercado e auxiliar em seus investimentos.
+Aprender a manipular e tratar dados de finanças e economia foi outra motivação para este projeto, dado a curiosidade e expertise que tenho neste assunto. Além disso, serve como ferramente de tomada de decisão para investidores brasileiros usar como insumo para acompanhamento do mercado e auxiliar em seus investimentos.
 
 ## Principais Etapas do Projeto
 
@@ -64,15 +65,17 @@ E por fim, mas não menos importantes, utilizamos o terminal do MetaTrder5 para 
 
 ### 📈 2. Gráficos de ações ao vivo
 
-Nesta etapa foi utilizada a biblioteca `plotly` para criação e plotagem dos gráficos de cotações.
+Nesta etapa foi utilizada a biblioteca `plotly` para criação e plotagem dos gráficos de cotações ao vivo.
 
-Com base nos dados de fechamento, variação e ticker coletados direto do terminal do MetaTrader5, plotei gráficos de candlestick para as ações.
+Com base nos dados de fechamento, variação e ticker coletados direto do terminal do MetaTrader5, plotei gráficos de candlestick para as ações. O codigo graficos_ativos.py dentro da pasta `components`configura os callbacks de troca de ticker e os inputs e outputs para atualização dos dados.
+
 
 ### 📈📉 3. Tabela dos principais ativos, maiores altas e maiores baixas do Ibovespa 
 
-Inicialmente, carrego os tickers da bolsa do arquivo `setores.csv` dentro da pasta `data` e puxo as cotações em tempo real da função `puxar_cotacao` do script `dados_mtr_cotacoes.py`, filtro as ações de maior liquidez (>=1000000 vol_movimento_diario).
+Inicialmente, carrego os tickers da bolsa do arquivo `setores.csv` dentro da pasta `data` e puxo as cotações em tempo real da função `puxar_cotacao` do script `dados_mt5_cotacoes.py`, filtro as ações de maior liquidez (> 10 negociações no dia).
 
-As maiores altas são as cinco ações que tiveram maior retorno no último dia, enquanto que as maiores baixas são as cinco ações que tiveram menor retorno no último dia.
+As maiores altas são as trêS ações que tiveram maior retorno no último workflows de dados do dash, enquanto que as maiores baixas são as três ações que tiveram menor retorno no último workflows de dados do dash. O script `ativos_ao_vivo.py` configura o layout para as tabelas de principais ativos, maiores altas e maiores baixas do Ibovespa, bem como os inputs e outputs das cotações em tempo real e também filtra por setor, de acordo com o arquivo `comp_ibov.csv`.
+
 
 ### 🚛 4. Setores da Bolsa 
 
@@ -99,7 +102,10 @@ Nesse painel, possuem dois layouts principais: o layout Brasil e o layout Mundo.
 
 ### 🛠️ 8. Deploy
 
-Configuração de IAM, IP Estatísticos para a instância EC2 na AWS, para manter o dashboard ligado na nuvem. Usou-se um arquivo yaml para manter a rotina de atualização dos dados a cada um hora via GitHub Actions.
+Configuração de IAM, IP Estatísticos para a instância EC2 na AWS, para manter o dashboard ligado na nuvem. Usou-se um o script rotinas.py para manter a rotina de atualização dos dados a cada uma hora rodando na máquina Windows Server da AWS.
+
+#### 8.1. Setup da Instância
+
 
 ## Tecnologias Utilizadas
 
@@ -237,12 +243,18 @@ pipx --version
  ```
 para instalar o `poetry` à sua máquina.
 
-3. Com o `poetry` instalado você já pode ativar o ambiente virtual isolado em sua máquina para rodar o projeto com 
+3. Com o `poetry` instalado, instale as bibliotecas do poetry.toml com:
+
+```bash
+    poetry install
+```
+
+4. Assim, ative o ambiente virtual isolado em sua máquina para rodar o projeto com 
 
 ```bash
     poetry env activate
 ```
-4. Após baixar as dependências necessárias, execute o projeto com 
+5. Após baixar as dependências necessárias, execute o projeto com 
 
 ```bash
 poetry run python -m src.dash_py_mercado_financeiro.formato
@@ -255,7 +267,7 @@ poetry run python -m src.dash_py_mercado_financeiro.formato
 
 [Topo ⤴︎](#conteúdos)
 
-Python 3.13.1 (Dec. 3, 2024)
+Python 3.11.1 (Dec. 6, 2022)
 
 ## Versionamento
 
