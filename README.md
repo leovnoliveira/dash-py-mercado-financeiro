@@ -106,6 +106,12 @@ Configuração de IAM, IP Estatísticos para a instância EC2 na AWS, para mante
 
 #### 8.1. Setup da Instância
 
+* Public IPv4 address: 44.197.220.119
+* Instance size: t3.medium
+* Architecture: AMD64
+* Total memory: 4096
+* Network: Up to 5 Gigabit
+
 
 ## Tecnologias Utilizadas
 
