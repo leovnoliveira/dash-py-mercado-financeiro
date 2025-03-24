@@ -163,8 +163,10 @@ DASH-PY-MERCADO-FINANCEIRO
 │   │   tickers.csv
 │
 ├───docs
-│   │   dashboard_model.PNG
-│   │   excalidraw_full.PNG
+│   │   dash_economic_and_financial_capital.PNG
+│   │   dash_economic_and_financial_news.PNG
+│   │   design_arch.png
+│   │   prototipo.png
 │
 ├───src
 │   ├───components
