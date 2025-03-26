@@ -51,6 +51,20 @@ def setores_bolsa(caminho_downloads):
             with arquivo_zip.open(planilha_nome) as file:
                 setores = pd.read_excel(file, skiprows= 6, engine = 'openpyxl')
 
+    # Funçõa par atentar remover o arquivo com retry
+    def remove_file_with_retry(filepath: str, retries=5, delay=1):
+        for i in range(retries):
+            try:
+                os.remove(filepath)
+                print(f"Arquivo {filepath} removido com sucesso.")
+                return
+            except Exception as e:
+                print(f"Tentativa {i+1} falhou ao tentar remover {filepath}. Tentar novamente")
+                time.sleep(delay)
+        raise PermissionError(f"Não foi possível remover o arquivo {filepath} após {retries} tentativas.")
+    
+    remove_file_with_retry(caminho_zip)
+
     # agora com o zip fechado, podemos remove-lo sem problemas
     os.remove(caminho_zip)
 
