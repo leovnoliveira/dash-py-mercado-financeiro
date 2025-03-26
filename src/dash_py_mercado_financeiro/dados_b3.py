@@ -53,20 +53,23 @@ def setores_bolsa(caminho_downloads):
 
     # Funçõa par atentar remover o arquivo com retry
     def remove_file_with_retry(filepath: str, retries=5, delay=1):
+        if not os.path.exists(filepath):
+            print(f"Arquivo {filepath} não encontrado. Não é necessário remover.")
+            return
         for i in range(retries):
             try:
                 os.remove(filepath)
                 print(f"Arquivo {filepath} removido com sucesso.")
                 return
-            except Exception as e:
+            except PermissionError:
                 print(f"Tentativa {i+1} falhou ao tentar remover {filepath}. Tentar novamente")
                 time.sleep(delay)
         raise PermissionError(f"Não foi possível remover o arquivo {filepath} após {retries} tentativas.")
     
     remove_file_with_retry(caminho_zip)
 
-    # agora com o zip fechado, podemos remove-lo sem problemas
-    os.remove(caminho_zip)
+    # # agora com o zip fechado, podemos remove-lo sem problemas
+    # os.remove(caminho_zip)
 
     setores['SUBSETOR'] = setores['SUBSETOR'].ffill()
 
