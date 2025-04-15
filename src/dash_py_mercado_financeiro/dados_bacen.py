@@ -1,5 +1,6 @@
 import os
 from bcb import sgs
+from bcb import currency
 from datetime import datetime
 from datetime import timedelta
 import pandas as pd
@@ -49,8 +50,16 @@ def att_dolar():
 
         while isinstance(dolar, pd.DataFrame) == False:
 
-            dolar = sgs.get({'DOLAR': 1},
-                            start= inicio)
+            try:
+                 dolar = currency.get('USD',
+                            start= inicio,
+                            end = hoje,
+                            side = 'ask')
+                 print(dolar)
+            except Exception as e:
+                print(f"Erro ao obter os dados do dólar: {e}")
+                break
+        
         
         dolar_csv_path = os.path.join(DATA_DIR, 'dolar.csv')
         dolar.to_csv(dolar_csv_path)
