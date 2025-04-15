@@ -87,7 +87,6 @@ Transporte,TEGMA       ,TGMA
 Transporte,CCR SA      ,CCRO
 Transporte,CONC RIO TER,CRTE
 Transporte,ECORODOVIAS ,ECOR
-Transporte,ROD TIETE   ,RDVT
 Transporte,TRIUNFO PART,TPIS
 Transporte,GRUAIRPORT,AGRU
 Transporte,HMOBI S.A,HMOB
@@ -175,7 +174,6 @@ Construção Civil,VIVER       ,VIVR
 "Tecidos, Vestuário e Calçados",PETTENATI   ,PTNT
 "Tecidos, Vestuário e Calçados",SANTANENSE  ,CTSA
 "Tecidos, Vestuário e Calçados",SPRINGS     ,SGPS
-"Tecidos, Vestuário e Calçados",TEKA        ,TEKA
 "Tecidos, Vestuário e Calçados",TEX RENAUX  ,TXRX
 "Tecidos, Vestuário e Calçados",TRACK FIELD,TFCO
 "Tecidos, Vestuário e Calçados",ALPARGATAS  ,ALPA
@@ -361,11 +359,9 @@ Serviços Financeiros Diversos,G2D INVEST,G2DI
 Serviços Financeiros Diversos,GP INVEST   ,GPIV
 Serviços Financeiros Diversos,PPLA,PPLA
 Serviços Financeiros Diversos,B3 ,B3SA
-Serviços Financeiros Diversos,CLEARSALE,CLSA
 Serviços Financeiros Diversos,CSU DIGITAL,CSUD
 Serviços Financeiros Diversos,EQUIFAXBRL,EFXB
 Serviços Financeiros Diversos,EVERTEC INC,EVTC
-Serviços Financeiros Diversos,STONE CO,STOC
 Serviços Financeiros Diversos,XP INC,XPBR
 Previdência e Seguros,BBSEGURIDADE,BBSE
 Previdência e Seguros,CAIXA SEGURI,CXSE
